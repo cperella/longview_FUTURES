@@ -1,0 +1,49 @@
+#####FUTURES code modified from tutorial: https://grasswiki.osgeo.org/wiki/FUTURES_tutorial#Software#####
+##### DOUBLE ASTERISK SYMBOL (**) DENOTE WHERE WE NEED TO INPUT OUR OWN DATA FILES #####
+
+### INITIAL STEPS AND DATA PREPARATION
+
+# input data
+  # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
+  # NLCD for relevant years (possibly include 1992/2001 Retrofit Land Cover Change Product): https://www.mrlc.gov/
+  # transportation network (roads) from TIGER: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
+  # protected areas (from Secured Lands: https://www.conservationgateway.org/ConservationByGeography/NorthAmerica/UnitedStates/edc/reportsdata/terrestrial/secured/Pages/default.aspx or PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download #ALREADY HAVE PAD-US DATA DOWNLOADED FOR STATES OVERLAPPING WITH SBRE)
+  # county boundaries (already downloaded for NC, SC, TN, GA, VA)
+
+
+# set working directory
+
+# set computational region to extent covering study area
+g.region raster=##RASTER TO SET EXTENT (e.g. NLCD tile)## -p
+
+
+# convert protected areas from vector to raster
+# tutorial uses Secured Lands data for secured lands in eastern US, other option is PAD-US data (and for different conservation scenarios can also use SECAS blueprint)
+# set NULLs to zeros for simple raster algebra in next step
+v.to.rast input=**PROTECTED AREAS DATA (name "protected_areas")** output=protected_areas use=val
+r.null map=protected_areas null=0
+
+
+# create binary rasters of developed/undeveloped areas
+# developed or urbanized areas derived from NLCD categories 21-24
+# developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
+# in example below, uses 3 years of NLCD data (**landuse_1992, landuse_2001, landuse_2011**): 1992, 2001, 2011; ##DECIDE HOW MANY AND WHICH YEARS OF DATA TO USE FROM NLCD; WHICH TILES FOR OUR EXTENT
+r.mapcalc "urban_1992 = if(landuse_1992 >= 21 && landuse_1992 <= 24, 1, if(landuse_1992 == 11 || landuse_1992 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
+
+# convert vector counties to raster with the values of the FIPS code attribute which links to population file
+v.to.rast input=**COUNTIES VECTOR FILE FROM TIGER/LINE DATABASE (name "counties")** type=area use=attr attribute_column=FIPS output=counties
+
+
+### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
+
+# derive slope in degrees from DEM
+r.slope.aspect elevation=**ELEVATION RASTER (name "elevation_30m")** slope=slope
+
+# derive distance from lakes/rivers
+# first extract "open water" category from NLCD
+r.mapcalc "water = if(landuse_2011 == 11, 1, null())"
+# then compute distance and set color table
+r.grow.distance input=water distance=dist_to_water
+r.colors -n map=dist_to_water color=blues
