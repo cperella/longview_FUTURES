@@ -18,7 +18,8 @@
   # cities (tutorial uses cities above 20000; given mostly rural study area, we may want to use a lower population threshold to capture smaller towns like Boone and Hendersonville (>10,000) or even smaller towns like Brevard or Waynesville (>5,000))
     # name = cities_[pop_threshold]
   # county population past estimates and future projections (from NCOSBM: https://www.osbm.nc.gov/facts-figures/population-demographics/state-demographer/countystate-population-projections)
-    # name
+    # names = population_trend.csv and population_projection.csv
+
   
 
 
@@ -106,6 +107,120 @@ r.futures.devpressure -n input=urban_2011 output=devpressure_0_5 method=gravity 
 # higher gamma means more rapid decrease of development influence with distance; size is hald the size of the moving window
 # lower gamma means that local development influences more distant places
 # two layers with different gamma and size parameters are derived for the potential statistical model
+
+### RESCALING VARIABLES
+
+# display ranges of predictor variables using Python tab in GUI
+for name in ['slope', 'dist_to_water', 'dist_to_protected', 'forest_smooth', 'travel_time_cities', 'road_dens', 'dist_interchanges', 'devpressure_0_5', 'devpressure_1']:
+    minmax = grass.raster_info(name)
+    print name, minmax['min'], minmax['max']
+
+# rescale some of the input variables to percentage or km
+r.mapcalc "dist_to_water_km = dist_to_water / 1000"
+r.mapcalc "dist_to_protected_km = dist_to_protected / 1000"
+r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
+r.mapcalc "road_dens_perc = road_dens * 100"
+r.mapcalc "forest_smooth_perc = forest_smooth * 100"
+
+### SAMPLING
+
+# to sample only in the counties of the study area, clip the development layer
+r.mapcalc "urban_2011_clip = if(counties, urban_2011)"
+
+# to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
+r.report map=urban_2011 units=h,c,p
+
+# sample the predictors and the response variable with 10,000 random points in undeveloped areas and 2,000 points in developed area ####### RATIO WILL CHANGE IN OUR STUDY AREA
+r.sample.category input=urban_2011_clip output=sampling sampled=counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities npoints=10000,2000
+
+# attribute table can be exported as CSV (optional)
+v.db.select map=sampling columns=urban_2011_clip,counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities separator=comma file=samples.csv
+
+### DEVELOPMENT POTENTIAL
+
+# find the best model for predicting urbanization with r.futures.potential by trying different combinations of predictions, e.g:
+r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties
+# or
+r.futures.potential input=sampling output=potential.csv columns=devpressure_1,road_dens_perc,dist_to_water_km,dist_to_protected_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties
+
+# can also run R dredge function to find best model; can specify minimum and maximum number of predictors that should be used in the final model
+r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties min_variables=4 max_variables=7
+
+# potential for tutorial created using:
+# r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties --o
+
+### DEMAND SUBMODEL
+
+# mask roads so they don't influence per capita land demand
+v.to.rast input=roads type=line output=roads_mask use=val
+r.mask roads_mask -i
+
+# r.futures.demand derives the population vs. development relation. The relation can be linear/logarithmic/logarithmic2/exponential/exponential approach
+
+  # linear: y = A + Bx
+  # logarithmic: y = A + Bln(x)
+  # logarithmic2: y = A + B * ln(x - C)          (requires SciPy)
+  # exponential: y = Ae^(BX)
+  # exp_approach: y = (1 - e^(-A(x - B))) + C    (requires SciPy)
+
+# the format of the input population CSV files is described in the manual
+# it is important to have synchronized categories of subregions and the column headers of the CSV files (in our case FIPS number)
+# how to simply generate the list of years (for which demand is computed) is described in r.futures.demand manual, for example run this in Python console:
+','.join([str(i) for i in range(2011, 2036)]) ###### WE WILL BE RUNNING THROUGH 2070 IN SHORT TERM SCENARIO
+
+# finally, create the demand file:
+r.futures.demand development=urban_1992,urban_2001,urban_2011 subregions=counties observed_population=population_trend.csv projected_population=population_projection.csv 
+                simulation_times=2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035 plot=plot_demand.pdf demand=demand.csv separator=comma ########### EXTEND SIMULATION TIME AND CONSIDER WHETHER WE WANT YEARLY TIME STEPS
+
+# working directory should now contain files plot_demand.png and demand.csv
+
+# if you have SciPy installed, you can experiment with other methods for fitting the functions:
+  # r.futures.demand ... method=logarithmic2
+  # r.futures.demand ... method=exp_approach
+
+# when finished, remove the mask
+r.mask -r
+
+### PATCH CALIBRATION
+
+# patch calibration is done to derive patches of new development by comparing historical and recent development
+# we can run this on the entire area and keep only patches with a minimum size of 2 cells (2 x 30 x 30 m = 1800)
+r.futures.calib development_start=urban_1992 development_end=urban_2011 subregions=counties patch_sizes=patches.txt patch_threshold=1800  -l
+
+# resulting patches.txt file contains the distribution of sizes of all found patches of development
+
+# can look at distribution of patch sizes using:
+from matplotlib import pyplot as plt
+with open('patches.txt') as f:
+    patches = [int(patch) for patch in f.readlines()]
+plt.hist(patches, 2000)
+plt.xlim(0,50)
+plt.show()
+
+# start the calibration for the best parameters of patch shape (there are also suggested parameters) ########### LOOK INTO MANUAL FOR MORE ABOUT THIS STEP, WHICH IS SKIPPED IN THE TUTORIAL
+# select only one county to begin calibration
+
+v.to.rast input=counties type=area where="FIPS == 37183" use=attr attribute_column=FIPS output=calib_county
+g.region raster=calib_county zoom=calib_county
+
+r.futures.calib development_start=urban_1992 development_end=urban_2011 subregions=calib_county patch_sizes=patches.txt calibration_results=calib.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities demand=demand.csv devpot_params=potential.csv num_neighbors=4 seed_search=2 development_pressure=devpressure_1 development_pressure_approach=gravity n_dev_neighbourhood=10 gamma=1 scaling_factor=1 --o
+
+### FUTURES SIMULATION
+
+# switch from calib_county region back to previous region
+g.region raster=landuse_2011 -p
+
+# everything is ready ro run r.futures.pga:
+r.futures.pga subregions=counties developed=urban_2011 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_1 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=2 random_seed=1 output=final output_series=final
+
+#### SCENARIOS
+
+# scenarios of spatial development patterns that result in infill or sprawl can be explored using the incentive_power parameter (uses a power function to transform the evenness of the probability gradient in POTENTIAL submodel
+# default value is 1, but can be changed to a number between 0.25 and 4; higher power leads to infill behavior, lower power leads to urban sprawl
+
+
+
+
 
 
 
