@@ -6,7 +6,7 @@
 # input data
   # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
     # name = elevation_30m
-  # NLCD for relevant years: https://www.mrlc.gov/ (already downloaded for 2001, 2006, 2011, 2016, 2019)
+  # NLCD for relevant years: https://www.mrlc.gov/ (already downloaded for SBRE shapefile for years 2001, 2006, 2011, 2016, 2019, 2021)
     # name = landuse_[year]
   # transportation network (roads) from TIGER: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
     # name = roads
