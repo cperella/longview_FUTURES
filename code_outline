@@ -11,7 +11,7 @@
   # transportation network (roads) from TIGER: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
     # name = roads
   # county boundaries (already downloaded for NC, SC, TN, GA, VA)
-    # name = 
+    # name = counties
   # protected areas (from Secured Lands: https://www.conservationgateway.org/ConservationByGeography/NorthAmerica/UnitedStates/edc/reportsdata/terrestrial/secured/Pages/default.aspx or PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download; 
                     PAD-US data already downloaded for states overlapping with SBRE)
     # name = protected_areas
