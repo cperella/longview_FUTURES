@@ -32,7 +32,7 @@ g.region raster=##RASTER TO SET EXTENT (e.g. NLCD tile)## -p
 # convert protected areas from vector to raster
 # tutorial uses Secured Lands data for secured lands in eastern US, other option is PAD-US data (and for different conservation scenarios can also use SECAS blueprint)
 # set NULLs to zeros for simple raster algebra in next step
-v.to.rast input=**PROTECTED AREAS DATA (name "protected_areas")** output=protected_areas use=val
+v.to.rast input=protected_areas output=protected_areas use=val
 r.null map=protected_areas null=0
 
 
@@ -45,9 +45,9 @@ r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landu
 r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
 
 # convert vector counties to raster with the values of the FIPS code attribute which links to population file
-v.to.rast input=**COUNTIES VECTOR FILE FROM TIGER/LINE DATABASE (name "counties")** type=area use=attr attribute_column=FIPS output=counties
+v.to.rast input=counties type=area use=attr attribute_column=FIPS output=counties # note that FIPS have to be numeric, not string
 # to subset counties, use the following:
-v.to.rast input=counties type=area where= "FIPS in (37021, 37039, 37043, 37075, 37087, 37089, 37099, 37113, 37173, 37175)" use=attr attribute_column=FIPS output=counties_subset
+v.to.rast input=counties type=area where="FIPS in (37021, 37039, 37043, 37075, 37087, 37089, 37099, 37113, 37173, 37175)" use=attr attribute_column=FIPS output=counties_subset
 
 ### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
 
