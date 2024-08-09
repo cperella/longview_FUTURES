@@ -212,7 +212,7 @@ r.futures.calib development_start=urban_1992 development_end=urban_2011 subregio
 g.region raster=landuse_2011 -p
 
 # everything is ready ro run r.futures.pga:
-r.futures.pga subregions=counties developed=urban_2011 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_1 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=2 random_seed=1 output=final output_series=final
+r.futures.pga subregions=counties_subset developed=urban_2021 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_1 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final output_series=final
 
 #### SCENARIOS
 
