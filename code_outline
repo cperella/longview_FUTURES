@@ -148,7 +148,11 @@ r.futures.potential input=sampling output=potential.csv columns=devpressure_1,ro
 r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties min_variables=4 max_variables=7
 
 # potential for tutorial created using:
-# r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties --o
+r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties --o
+
+# visualize the initial development potential (suitability) raster from predictors and model coefficients; serves to evaluate development potential model
+r.futures.potsurface input=potential.csv subregions=counties output=suitability
+r.colors map=suitability color=byr
 
 ### DEMAND SUBMODEL
 
