@@ -17,6 +17,7 @@
     # name = protected_areas
   # cities (tutorial uses cities above 20000; given mostly rural study area, we may want to use a lower population threshold to capture smaller towns like Boone and Hendersonville (>10,000) or even smaller towns like Brevard or Waynesville (>5,000))
     # name = cities_[pop_threshold]
+    # note: our cities were derived using the centroids of urban areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units
   # county population past estimates and future projections (from NCOSBM: https://www.osbm.nc.gov/facts-figures/population-demographics/state-demographer/countystate-population-projections)
     # names = population_trend.csv and population_projection.csv
 
@@ -39,15 +40,18 @@ r.null map=protected_areas null=0
 # create binary rasters of developed/undeveloped areas
 # developed or urbanized areas derived from NLCD categories 21-24
 # developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
-# in example below, uses 3 years of NLCD data (**landuse_1992, landuse_2001, landuse_2011**) ##DECIDE HOW MANY/WHICH YEARS OF DATA TO USE FROM NLCD; WHICH TILES FOR OUR EXTENT
-r.mapcalc "urban_1992 = if(landuse_1992 >= 21 && landuse_1992 <= 24, 1, if(landuse_1992 == 11 || landuse_1992 >= 90 || protected_areas, null(), 0))"
+# used NLCD legacy years: 2001, 2006, 2011, 2016, 2019
 r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2006 = if(landuse_2006 >= 21 && landuse_2006 <= 24, 1, if(landuse_2006 == 11 || landuse_2006 >= 90 || protected_areas, null(), 0))"
 r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2016 = if(landuse_2016 >= 21 && landuse_2016 <= 24, 1, if(landuse_2016 == 11 || landuse_2016 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2019 = if(landuse_2019 >= 21 && landuse_2019 <= 24, 1, if(landuse_2019 == 11 || landuse_2019 >= 90 || protected_areas, null(), 0))"
 
 # convert vector counties to raster with the values of the FIPS code attribute which links to population file
 v.to.rast input=counties type=area use=attr attribute_column=FIPS output=counties # note that FIPS have to be numeric, not string
 # to subset counties, use the following:
-v.to.rast input=counties type=area where="FIPS in (37021, 37039, 37043, 37075, 37087, 37089, 37099, 37113, 37173, 37175)" use=attr attribute_column=FIPS output=counties_subset
+# v.to.rast input=counties type=area where="FIPS in (37021, 37039, 37043, 37075, 37087, 37089, 37099, 37113, 37173, 37175)" use=attr attribute_column=FIPS output=counties_subset
+### our study area counties were subset ahead of time
 
 ### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
 
@@ -56,7 +60,7 @@ r.slope.aspect elevation="elevation_30m" slope=slope
 
 ## derive distance from lakes/rivers
 # first extract "open water" category from NLCD
-r.mapcalc "water = if(landuse_2011 == 11, 1, null())"
+r.mapcalc "water = if(landuse_2019 == 11, 1, null())"
 # then compute distance and set color table
 r.grow.distance input=water distance=dist_to_water
 r.colors -n map=dist_to_water color=blues
@@ -103,8 +107,8 @@ r.grow.distance -m input=interchanges distance=dist_interchanges
 
 # compute development pressure with r.futures.devpressure module
 # development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
-r.futures.devpressure -n input=urban_2011 output=devpressure_1 method=gravity size=10 gamma=1 scaling_factor=1
-r.futures.devpressure -n input=urban_2011 output=devpressure_0_5 method=gravity size=30 gamma=0.5 scaling_factor=0.1
+r.futures.devpressure -n input=urban_2019 output=devpressure_1 method=gravity size=10 gamma=1 scaling_factor=1
+r.futures.devpressure -n input=urban_2019 output=devpressure_0_5 method=gravity size=30 gamma=0.5 scaling_factor=0.1
 # higher gamma means more rapid decrease of development influence with distance; size is hald the size of the moving window
 # lower gamma means that local development influences more distant places
 # two layers with different gamma and size parameters are derived for the potential statistical model
@@ -125,8 +129,11 @@ r.mapcalc "forest_smooth_perc = forest_smooth * 100"
 
 ### SAMPLING
 
+# To build multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 2001 and 2019.
+r.mapcalc "urban_change_01_19 = if(urban_2019 == 1, if(urban_2001 == 0, 1, null()), 0)"
+
 # to sample only in the counties of the study area, clip the development layer
-r.mapcalc "urban_2011_clip = if(counties, urban_2011)"
+r.mapcalc "urban_change_clip = if(counties, urban_change_01_19)"
 
 # to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
 r.report map=urban_2011 units=h,c,p
