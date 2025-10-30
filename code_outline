@@ -136,26 +136,29 @@ r.mapcalc "urban_change_01_19 = if(urban_2019 == 1, if(urban_2001 == 0, 1, null(
 r.mapcalc "urban_change_clip = if(counties, urban_change_01_19)"
 
 # to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
-r.report map=urban_2011 units=h,c,p
+r.report map=urban_change_01_19 units=h,c,p
 
-# sample the predictors and the response variable with 10,000 random points in undeveloped areas and 2,000 points in developed area ####### RATIO WILL CHANGE IN OUR STUDY AREA
-r.sample.category input=urban_2011_clip output=sampling sampled=counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities npoints=10000,2000
+# sample the predictors and the response variable with 10,000 random points in undeveloped areas and 2,000 points in developed area ####### RATIO WILL CHANGE IN OUR STUDY AREA ------> Note, npoints kept the same for initial test
+r.sample.category input=urban_change_clip output=sampling sampled=counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities npoints=10000,2000
 
 # attribute table can be exported as CSV (optional)
-v.db.select map=sampling columns=urban_2011_clip,counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities separator=comma file=samples.csv
+v.db.select map=sampling columns=urban_change_clip,counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities separator=comma file=samples.csv
 
 ### DEVELOPMENT POTENTIAL
 
 # find the best model for predicting urbanization with r.futures.potential by trying different combinations of predictions, e.g:
-r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties
+r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
 # or
-r.futures.potential input=sampling output=potential.csv columns=devpressure_1,road_dens_perc,dist_to_water_km,dist_to_protected_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties
+r.futures.potential input=sampling output=potential.csv columns=devpressure_1,road_dens_perc,dist_to_water_km,dist_to_protected_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
 
 # can also run R dredge function to find best model; can specify minimum and maximum number of predictors that should be used in the final model
-r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties min_variables=4 max_variables=7
+r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties min_variables=4 max_variables=7
 
 # potential for tutorial created using:
-r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_2011_clip subregions_column=counties --o
+r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties --o
+
+#################### TEST RUN ##########################
+r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
 
 # visualize the initial development potential (suitability) raster from predictors and model coefficients; serves to evaluate development potential model
 r.futures.potsurface input=potential.csv subregions=counties output=suitability
@@ -178,11 +181,12 @@ r.mask roads_mask -i
 # the format of the input population CSV files is described in the manual
 # it is important to have synchronized categories of subregions and the column headers of the CSV files (in our case FIPS number)
 # how to simply generate the list of years (for which demand is computed) is described in r.futures.demand manual, for example run this in Python console:
-','.join([str(i) for i in range(2011, 2036)]) ###### WE WILL BE RUNNING THROUGH 2070 IN SHORT TERM SCENARIO
+','.join([str(i) for i in range(2019, 2100)])
 
 # finally, create the demand file:
-r.futures.demand development=urban_1992,urban_2001,urban_2011 subregions=counties observed_population=population_trend.csv projected_population=population_projection.csv 
-                simulation_times=2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035 plot=plot_demand.pdf demand=demand.csv separator=comma ########### EXTEND SIMULATION TIME AND CONSIDER WHETHER WE WANT YEARLY TIME STEPS
+r.futures.demand development=urban_2001,urban_2006,urban_2011,urban_2016,urban_2019 subregions=counties observed_population=population_trend_sbre.csv projected_population=population_projection_ssp1.csv 
+                simulation_times=2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,
+                2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand.pdf demand=demand.csv separator=comma
 
 # working directory should now contain files plot_demand.png and demand.csv
 
@@ -197,7 +201,7 @@ r.mask -r
 
 # patch calibration is done to derive patches of new development by comparing historical and recent development
 # we can run this on the entire area and keep only patches with a minimum size of 2 cells (2 x 30 x 30 m = 1800)
-r.futures.calib development_start=urban_1992 development_end=urban_2011 subregions=counties patch_sizes=patches.txt patch_threshold=1800  -l
+r.futures.calib development_start=urban_2001 development_end=urban_2019 subregions=counties patch_sizes=patches.txt patch_threshold=1800  -l
 
 # resulting patches.txt file contains the distribution of sizes of all found patches of development
 
@@ -220,9 +224,9 @@ r.futures.calib development_start=urban_1992 development_end=urban_2011 subregio
 ### FUTURES SIMULATION
 
 # switch from calib_county region back to previous region
-g.region raster=landuse_2011 -p
+g.region raster=landuse_2019 -p
 
-# everything is ready ro run r.futures.pga:
+# everything is ready to run r.futures.pga:
 r.futures.pga subregions=counties_subset developed=urban_2021 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_1 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final output_series=final
 
 #### SCENARIOS
