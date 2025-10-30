@@ -184,9 +184,7 @@ r.mask roads_mask -i
 ','.join([str(i) for i in range(2019, 2100)])
 
 # finally, create the demand file:
-r.futures.demand development=urban_2001,urban_2006,urban_2011,urban_2016,urban_2019 subregions=counties observed_population=population_trend_sbre.csv projected_population=population_projection_ssp1.csv 
-                simulation_times=2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,
-                2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand.pdf demand=demand.csv separator=comma
+r.futures.demand development=urban_2001,urban_2006,urban_2011,urban_2016,urban_2019 subregions=counties observed_population=population_trend_sbre.csv projected_population=population_projection_ssp1.csv simulation_times=2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand.pdf demand=demand.csv separator=comma
 
 # working directory should now contain files plot_demand.png and demand.csv
 
@@ -216,18 +214,18 @@ plt.show()
 # start the calibration for the best parameters of patch shape (there are also suggested parameters) ########### LOOK INTO MANUAL FOR MORE ABOUT THIS STEP, WHICH IS SKIPPED IN THE TUTORIAL
 # select only one county to begin calibration
 
-v.to.rast input=counties type=area where="FIPS == 37183" use=attr attribute_column=FIPS output=calib_county
-g.region raster=calib_county zoom=calib_county
+#v.to.rast input=counties type=area where="FIPS == 37183" use=attr attribute_column=FIPS output=calib_county
+#g.region raster=calib_county zoom=calib_county
 
-r.futures.calib development_start=urban_1992 development_end=urban_2011 subregions=calib_county patch_sizes=patches.txt calibration_results=calib.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities demand=demand.csv devpot_params=potential.csv num_neighbors=4 seed_search=2 development_pressure=devpressure_1 development_pressure_approach=gravity n_dev_neighbourhood=10 gamma=1 scaling_factor=1 --o
+r.futures.calib development_start=urban_2001 development_end=urban_2019 subregions=counties patch_sizes=patches_new.txt calibration_results=calib_new.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities demand=demand.csv devpot_params=potential.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_0_5 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
 
 ### FUTURES SIMULATION
 
 # switch from calib_county region back to previous region
-g.region raster=landuse_2019 -p
+#g.region raster=landuse_2019 -p
 
 # everything is ready to run r.futures.pga:
-r.futures.pga subregions=counties_subset developed=urban_2021 predictors=slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_1 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final output_series=final
+r.futures.pga subregions=counties developed=urban_2019 predictors=slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_0_5 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final output_series=final
 
 #### SCENARIOS
 
