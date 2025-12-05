@@ -76,6 +76,10 @@ r.mapcalc "forest = if(landuse_[year] >= 41 && landuse_[year] <= 43, 1, 0)"
 r.neighbors -c input=forest output=forest_smooth size=15 method=average
 r.colors map=forest_smooth color=ndvi
 
+## smooth transition between agriculture and other land uses
+r.mapcalc "agriculture = if(landuse_[year] >= 81 && landuse_[year] <= 82, 1, 0)"
+r.neighbors -c input=agriculture output=ag_smooth size=15 method=average
+
 ## compute travel time to cities/towns defined as cumulative cost using estimated speed
 # first specify speed for different types of roads 
 # create a new attribute field (speed) in the roads layer and then assign speed in km/h based on type of road
@@ -101,8 +105,6 @@ r.neighbors -c input=roads output=road_dens size=25 method=average
 v.to.rast input=roads type=line where="MTFCC = 'S1630'" output=interchanges use=val # S1630 = highway ramp
 r.grow.distance -m input=interchanges distance=dist_interchanges
 
-############## THINK ABOUT WHAT ADDITIONAL VARIABLES WE WANT TO INCLUDE
-
 ### DEVELOPMENT PRESSURE
 
 # compute development pressure with r.futures.devpressure module
@@ -126,6 +128,7 @@ r.mapcalc "dist_to_protected_km = dist_to_protected / 1000"
 r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
 r.mapcalc "road_dens_perc = road_dens * 100"
 r.mapcalc "forest_smooth_perc = forest_smooth * 100"
+r.mapcalc "ag_smooth_perc = ag_smooth * 100"
 
 ### SAMPLING
 
@@ -155,7 +158,7 @@ r.futures.potential input=sampling output=potential.csv columns=devpressure_1,ro
 r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties min_variables=4 max_variables=7
 
 # potential for tutorial created using:
-r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties --o
+r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,ag_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties --o
 
 #################### TEST RUN ##########################
 r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
