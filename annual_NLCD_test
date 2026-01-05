@@ -5,52 +5,64 @@
 # input data
   # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
     # name = elevation_30m
-  # NLCD for relevant years: https://www.mrlc.gov/ (already downloaded for SBRE shapefile for years 2001, 2006, 2011, 2016, 2019, 2021)
+  # NLCD for 1985-2005
     # name = landuse_[year]
   # transportation network (roads) from TIGER: https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html
     # name = roads
-  # county boundaries (already downloaded for NC, SC, TN, GA, VA)
+  # county boundaries from TIGER:
     # name = counties
-  # protected areas (from Secured Lands: https://www.conservationgateway.org/ConservationByGeography/NorthAmerica/UnitedStates/edc/reportsdata/terrestrial/secured/Pages/default.aspx or PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download; 
-                    PAD-US data already downloaded for states overlapping with SBRE)
+  # protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download)
     # name = protected_areas
-  # cities (tutorial uses cities above 20000; given mostly rural study area, we may want to use a lower population threshold to capture smaller towns like Boone and Hendersonville (>10,000) or even smaller towns like Brevard or Waynesville (>5,000))
+  # cities (cities were derived using the centroids of Urban Areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units)
     # name = cities_[pop_threshold]
-    # note: our cities were derived using the centroids of urban areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units
-  # county population past estimates and future projections (from NCOSBM: https://www.osbm.nc.gov/facts-figures/population-demographics/state-demographer/countystate-population-projections)
+  # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
     # names = population_trend.csv and population_projection.csv
 
   
 
-
 # set working directory
 
 # set computational region to extent covering study area
-g.region raster=##RASTER TO SET EXTENT (e.g. NLCD tile)## -p
+g.region raster=elevation_30m -p
 
 
-# convert protected areas from vector to raster
-# tutorial uses Secured Lands data for secured lands in eastern US, other option is PAD-US data (and for different conservation scenarios can also use SECAS blueprint)
+# convert protected areas from vector to raster (already completed from previous tests)
 # set NULLs to zeros for simple raster algebra in next step
-v.to.rast input=protected_areas output=protected_areas use=val
-r.null map=protected_areas null=0
+###v.to.rast input=protected_areas output=protected_areas use=val
+###r.null map=protected_areas null=0
 
 
 # create binary rasters of developed/undeveloped areas
 # developed or urbanized areas derived from NLCD categories 21-24
 # developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
-# used NLCD legacy years: 2001, 2006, 2011, 2016, 2019
+# annual NLCD product from 1985-2005
+r.mapcalc "urban_1985 = if(landuse_1985 >= 21 && landuse_1985 <= 24, 1, if(landuse_1985 == 11 || landuse_1985 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1986 = if(landuse_1986 >= 21 && landuse_1986 <= 24, 1, if(landuse_1986 == 11 || landuse_1986 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1987 = if(landuse_1987 >= 21 && landuse_1987 <= 24, 1, if(landuse_1987 == 11 || landuse_1987 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1988 = if(landuse_1988 >= 21 && landuse_1988 <= 24, 1, if(landuse_1988 == 11 || landuse_1988 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1989 = if(landuse_1989 >= 21 && landuse_1989 <= 24, 1, if(landuse_1989 == 11 || landuse_1989 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1990 = if(landuse_1990 >= 21 && landuse_1990 <= 24, 1, if(landuse_1990 == 11 || landuse_1990 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1991 = if(landuse_1991 >= 21 && landuse_1991 <= 24, 1, if(landuse_1991 == 11 || landuse_1991 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1992 = if(landuse_1992 >= 21 && landuse_1992 <= 24, 1, if(landuse_1992 == 11 || landuse_1992 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1993 = if(landuse_1993 >= 21 && landuse_1993 <= 24, 1, if(landuse_1993 == 11 || landuse_1993 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1994 = if(landuse_1994 >= 21 && landuse_1994 <= 24, 1, if(landuse_1994 == 11 || landuse_1994 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1995 = if(landuse_1995 >= 21 && landuse_1995 <= 24, 1, if(landuse_1995 == 11 || landuse_1995 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1996 = if(landuse_1996 >= 21 && landuse_1996 <= 24, 1, if(landuse_1996 == 11 || landuse_1996 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1997 = if(landuse_1997 >= 21 && landuse_1997 <= 24, 1, if(landuse_1997 == 11 || landuse_1997 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1998 = if(landuse_1998 >= 21 && landuse_1998 <= 24, 1, if(landuse_1998 == 11 || landuse_1998 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1999 = if(landuse_1999 >= 21 && landuse_1999 <= 24, 1, if(landuse_1999 == 11 || landuse_1999 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2000 = if(landuse_2000 >= 21 && landuse_2000 <= 24, 1, if(landuse_2000 == 11 || landuse_2000 >= 90 || protected_areas, null(), 0))"
 r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2006 = if(landuse_2006 >= 21 && landuse_2006 <= 24, 1, if(landuse_2006 == 11 || landuse_2006 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2016 = if(landuse_2016 >= 21 && landuse_2016 <= 24, 1, if(landuse_2016 == 11 || landuse_2016 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2019 = if(landuse_2019 >= 21 && landuse_2019 <= 24, 1, if(landuse_2019 == 11 || landuse_2019 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2002 = if(landuse_2002 >= 21 && landuse_2002 <= 24, 1, if(landuse_2002 == 11 || landuse_2002 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2003 = if(landuse_2003 >= 21 && landuse_2003 <= 24, 1, if(landuse_2003 == 11 || landuse_2003 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2004 = if(landuse_2004 >= 21 && landuse_2004 <= 24, 1, if(landuse_2004 == 11 || landuse_2004 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2005 = if(landuse_2005 >= 21 && landuse_2005 <= 24, 1, if(landuse_2005 == 11 || landuse_2005 >= 90 || protected_areas, null(), 0))"
 
 # convert vector counties to raster with the values of the FIPS code attribute which links to population file
 v.to.rast input=counties type=area use=attr attribute_column=FIPS output=counties # note that FIPS have to be numeric, not string
 # to subset counties, use the following:
-# v.to.rast input=counties type=area where="FIPS in (37021, 37039, 37043, 37075, 37087, 37089, 37099, 37113, 37173, 37175)" use=attr attribute_column=FIPS output=counties_subset
-### our study area counties were subset ahead of time
+# v.to.rast input=counties type=area where="FIPS in (13057, 13111, 13123, 13227, 13241, 13281, 13291, 37005, 37009, 37011, 37021, 37027, 37039, 37043, 37075, 37087, 37089, 37099, 37111, 37113, 37115, 37121, 37173, 37175, 37189, 37193, 37199, 47009, 47019, 47029, 47091, 47123, 47139, 47155, 47171, 51035, 51063, 51077, 51640)" use=attr attribute_column=FIPS output=counties_subset
+### subset represents counties that have >40% overlap with the SBRE
 
 ### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
 
