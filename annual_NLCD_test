@@ -26,7 +26,7 @@
 g.region raster=elevation_30m -p
 
 
-# convert protected areas from vector to raster (already completed from previous tests)
+# convert protected areas from vector to raster ### NOTE: using PAD_states_merged.shp for protected_areas_full (previous shp was cropped to SBRE, which made distances odd; missing KY data but far enough outside of study area that visualization is better)
 # set NULLs to zeros for simple raster algebra in next step
 ###v.to.rast input=protected_areas output=protected_areas use=val
 ###r.null map=protected_areas null=0
@@ -36,27 +36,27 @@ g.region raster=elevation_30m -p
 # developed or urbanized areas derived from NLCD categories 21-24
 # developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
 # annual NLCD product from 1985-2005
-r.mapcalc "urban_1985 = if(landuse_1985 >= 21 && landuse_1985 <= 24, 1, if(landuse_1985 == 11 || landuse_1985 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1986 = if(landuse_1986 >= 21 && landuse_1986 <= 24, 1, if(landuse_1986 == 11 || landuse_1986 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1987 = if(landuse_1987 >= 21 && landuse_1987 <= 24, 1, if(landuse_1987 == 11 || landuse_1987 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1988 = if(landuse_1988 >= 21 && landuse_1988 <= 24, 1, if(landuse_1988 == 11 || landuse_1988 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1989 = if(landuse_1989 >= 21 && landuse_1989 <= 24, 1, if(landuse_1989 == 11 || landuse_1989 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1990 = if(landuse_1990 >= 21 && landuse_1990 <= 24, 1, if(landuse_1990 == 11 || landuse_1990 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1991 = if(landuse_1991 >= 21 && landuse_1991 <= 24, 1, if(landuse_1991 == 11 || landuse_1991 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1992 = if(landuse_1992 >= 21 && landuse_1992 <= 24, 1, if(landuse_1992 == 11 || landuse_1992 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1993 = if(landuse_1993 >= 21 && landuse_1993 <= 24, 1, if(landuse_1993 == 11 || landuse_1993 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1994 = if(landuse_1994 >= 21 && landuse_1994 <= 24, 1, if(landuse_1994 == 11 || landuse_1994 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1995 = if(landuse_1995 >= 21 && landuse_1995 <= 24, 1, if(landuse_1995 == 11 || landuse_1995 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1996 = if(landuse_1996 >= 21 && landuse_1996 <= 24, 1, if(landuse_1996 == 11 || landuse_1996 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1997 = if(landuse_1997 >= 21 && landuse_1997 <= 24, 1, if(landuse_1997 == 11 || landuse_1997 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1998 = if(landuse_1998 >= 21 && landuse_1998 <= 24, 1, if(landuse_1998 == 11 || landuse_1998 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_1999 = if(landuse_1999 >= 21 && landuse_1999 <= 24, 1, if(landuse_1999 == 11 || landuse_1999 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2000 = if(landuse_2000 >= 21 && landuse_2000 <= 24, 1, if(landuse_2000 == 11 || landuse_2000 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2002 = if(landuse_2002 >= 21 && landuse_2002 <= 24, 1, if(landuse_2002 == 11 || landuse_2002 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2003 = if(landuse_2003 >= 21 && landuse_2003 <= 24, 1, if(landuse_2003 == 11 || landuse_2003 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2004 = if(landuse_2004 >= 21 && landuse_2004 <= 24, 1, if(landuse_2004 == 11 || landuse_2004 >= 90 || protected_areas, null(), 0))"
-r.mapcalc "urban_2005 = if(landuse_2005 >= 21 && landuse_2005 <= 24, 1, if(landuse_2005 == 11 || landuse_2005 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_1985 = if(landuse_1985 >= 21 && landuse_1985 <= 24, 1, if(landuse_1985 == 11 || landuse_1985 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1986 = if(landuse_1986 >= 21 && landuse_1986 <= 24, 1, if(landuse_1986 == 11 || landuse_1986 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1987 = if(landuse_1987 >= 21 && landuse_1987 <= 24, 1, if(landuse_1987 == 11 || landuse_1987 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1988 = if(landuse_1988 >= 21 && landuse_1988 <= 24, 1, if(landuse_1988 == 11 || landuse_1988 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1989 = if(landuse_1989 >= 21 && landuse_1989 <= 24, 1, if(landuse_1989 == 11 || landuse_1989 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1990 = if(landuse_1990 >= 21 && landuse_1990 <= 24, 1, if(landuse_1990 == 11 || landuse_1990 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1991 = if(landuse_1991 >= 21 && landuse_1991 <= 24, 1, if(landuse_1991 == 11 || landuse_1991 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1992 = if(landuse_1992 >= 21 && landuse_1992 <= 24, 1, if(landuse_1992 == 11 || landuse_1992 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1993 = if(landuse_1993 >= 21 && landuse_1993 <= 24, 1, if(landuse_1993 == 11 || landuse_1993 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1994 = if(landuse_1994 >= 21 && landuse_1994 <= 24, 1, if(landuse_1994 == 11 || landuse_1994 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1995 = if(landuse_1995 >= 21 && landuse_1995 <= 24, 1, if(landuse_1995 == 11 || landuse_1995 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1996 = if(landuse_1996 >= 21 && landuse_1996 <= 24, 1, if(landuse_1996 == 11 || landuse_1996 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1997 = if(landuse_1997 >= 21 && landuse_1997 <= 24, 1, if(landuse_1997 == 11 || landuse_1997 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1998 = if(landuse_1998 >= 21 && landuse_1998 <= 24, 1, if(landuse_1998 == 11 || landuse_1998 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_1999 = if(landuse_1999 >= 21 && landuse_1999 <= 24, 1, if(landuse_1999 == 11 || landuse_1999 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2000 = if(landuse_2000 >= 21 && landuse_2000 <= 24, 1, if(landuse_2000 == 11 || landuse_2000 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2002 = if(landuse_2002 >= 21 && landuse_2002 <= 24, 1, if(landuse_2002 == 11 || landuse_2002 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2003 = if(landuse_2003 >= 21 && landuse_2003 <= 24, 1, if(landuse_2003 == 11 || landuse_2003 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2004 = if(landuse_2004 >= 21 && landuse_2004 <= 24, 1, if(landuse_2004 == 11 || landuse_2004 >= 90 || protected_areas@annual_NLCD, null(), 0))"
+r.mapcalc "urban_2005 = if(landuse_2005 >= 21 && landuse_2005 <= 24, 1, if(landuse_2005 == 11 || landuse_2005 >= 90 || protected_areas@annual_NLCD, null(), 0))"
 
 # convert vector counties to raster with the values of the FIPS code attribute which links to population file
 v.to.rast input=counties type=area use=attr attribute_column=FIPS output=counties # note that FIPS have to be numeric, not string
@@ -67,19 +67,19 @@ v.to.rast input=counties type=area use=attr attribute_column=FIPS output=countie
 ### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
 
 ## derive slope in degrees from DEM
-r.slope.aspect elevation="elevation_30m" slope=slope
+#r.slope.aspect elevation="elevation_30m" slope=slope ### used elevation and slope from test runs
 
 ## derive distance from lakes/rivers
 # first extract "open water" category from NLCD
-r.mapcalc "water = if(landuse_2019 == 11, 1, null())"
+r.mapcalc "water_2005 = if(landuse_2005 == 11, 1, null())"
 # then compute distance and set color table
-r.grow.distance input=water distance=dist_to_water
-r.colors -n map=dist_to_water color=blues
+r.grow.distance input=water_2005 distance=dist_to_water_2005
+r.colors -n map=dist_to_water_2005 color=blues
 
 ## derive distnace from protected areas
 # use raster of protected areas from above but set NULLs to zero
-r.null map=protected_areas setnull=0
-r.grow.distance input=protected_areas distance=dist_to_protected
+r.null map=protected_areas@annual_NLCD setnull=0
+r.grow.distance input=protected_areas@annual_NLCD distance=dist_to_protected
 r.colors map=dist_to_protected color=gyr
 
 ## smooth transition between forests and other land uses
