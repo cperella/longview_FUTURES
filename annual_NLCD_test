@@ -11,7 +11,7 @@
     # name = roads
   # county boundaries from TIGER:
     # name = counties
-  # protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download)
+  # protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
     # name = protected_areas
   # cities (cities were derived using the centroids of Urban Areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units)
     # name = cities_[pop_threshold]
@@ -26,7 +26,7 @@
 g.region raster=elevation_30m -p
 
 
-# convert protected areas from vector to raster ### NOTE: using PAD_states_merged.shp for protected_areas_full (previous shp was cropped to SBRE, which made distances odd; missing KY data but far enough outside of study area that visualization is better)
+# convert protected areas from vector to raster 
 # set NULLs to zeros for simple raster algebra in next step
 ###v.to.rast input=protected_areas output=protected_areas use=val
 ###r.null map=protected_areas null=0
@@ -76,20 +76,20 @@ r.mapcalc "water_2005 = if(landuse_2005 == 11, 1, null())"
 r.grow.distance input=water_2005 distance=dist_to_water_2005
 r.colors -n map=dist_to_water_2005 color=blues
 
-## derive distnace from protected areas
+## derive distnace from protected areas ### NOTE: using pad_new file, which is from v4.1 and merged all states that overlap with comp region, but did NOT use to create binary urban rasters, only dist_to_protected
 # use raster of protected areas from above but set NULLs to zero
-r.null map=protected_areas@annual_NLCD setnull=0
-r.grow.distance input=protected_areas@annual_NLCD distance=dist_to_protected
-r.colors map=dist_to_protected color=gyr
+r.null map=pad_new setnull=0
+r.grow.distance input=pad_new distance=dist_to_protected_2005
+r.colors map=dist_to_protected_2005 color=gyr
 
 ## smooth transition between forests and other land uses
-r.mapcalc "forest = if(landuse_[year] >= 41 && landuse_[year] <= 43, 1, 0)"
-r.neighbors -c input=forest output=forest_smooth size=15 method=average
+r.mapcalc "forest_2005 = if(landuse_2005 >= 41 && landuse_2005 <= 43, 1, 0)"
+r.neighbors -c input=forest_2005 output=forest_smooth_2005 size=15 method=average
 r.colors map=forest_smooth color=ndvi
 
 ## smooth transition between agriculture and other land uses
-r.mapcalc "agriculture = if(landuse_[year] >= 81 && landuse_[year] <= 82, 1, 0)"
-r.neighbors -c input=agriculture output=ag_smooth size=15 method=average
+r.mapcalc "agriculture_2005 = if(landuse_2005 >= 81 && landuse_2005 <= 82, 1, 0)"
+r.neighbors -c input=agriculture_2005 output=ag_smooth_2005 size=15 method=average
 
 ## compute travel time to cities/towns defined as cumulative cost using estimated speed
 # first specify speed for different types of roads 
@@ -120,8 +120,15 @@ r.grow.distance -m input=interchanges distance=dist_interchanges
 
 # compute development pressure with r.futures.devpressure module
 # development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
-r.futures.devpressure -n input=urban_2019 output=devpressure_1 method=gravity size=10 gamma=1 scaling_factor=1
-r.futures.devpressure -n input=urban_2019 output=devpressure_0_5 method=gravity size=30 gamma=0.5 scaling_factor=0.1
+# test different gamma and neighborhood sizes
+# test 1 - gamma 0.5 size 10
+r.futures.devpressure -n input=urban_2005 output=devpressure_g05_s10 method=gravity size=10 gamma=0.5 scaling_factor=1
+# test 2 - gamma 0.5 size 30
+r.futures.devpressure -n input=urban_2005 output=devpressure_g05_s30 method=gravity size=30 gamma=0.5 scaling_factor=1
+# test 3 - gamma 1.5 size 10
+r.futures.devpressure -n input=urban_2005 output=devpressure_g15_s10 method=gravity size=10 gamma=1.5 scaling_factor=1
+# test 4 - gamma 1.5 size 30
+r.futures.devpressure -n input=urban_2005 output=devpressure_g15_s30 method=gravity size=30 gamma=1.5 scaling_factor=1
 # higher gamma means more rapid decrease of development influence with distance; size is hald the size of the moving window
 # lower gamma means that local development influences more distant places
 # two layers with different gamma and size parameters are derived for the potential statistical model
@@ -134,41 +141,50 @@ for name in ['slope', 'dist_to_water', 'dist_to_protected', 'forest_smooth', 'tr
     print name, minmax['min'], minmax['max']
 
 # rescale some of the input variables to percentage or km
-r.mapcalc "dist_to_water_km = dist_to_water / 1000"
-r.mapcalc "dist_to_protected_km = dist_to_protected / 1000"
-r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
-r.mapcalc "road_dens_perc = road_dens * 100"
-r.mapcalc "forest_smooth_perc = forest_smooth * 100"
-r.mapcalc "ag_smooth_perc = ag_smooth * 100"
+r.mapcalc "dist_to_water_km_2005 = dist_to_water_2005 / 1000"
+r.mapcalc "dist_to_protected_km_2005 = dist_to_protected_2005 / 1000"
+#r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
+#r.mapcalc "road_dens_perc = road_dens * 100"
+r.mapcalc "forest_smooth_perc_2005 = forest_smooth_2005 * 100"
+r.mapcalc "ag_smooth_perc_2005 = ag_smooth_2005 * 100"
 
 ### SAMPLING
 
-# To build multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 2001 and 2019.
-r.mapcalc "urban_change_01_19 = if(urban_2019 == 1, if(urban_2001 == 0, 1, null()), 0)"
+# To build multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 1985 and 2005.
+r.mapcalc "urban_change_85_05 = if(urban_2005 == 1, if(urban_1985 == 0, 1, null()), 0)"
 
 # to sample only in the counties of the study area, clip the development layer
-r.mapcalc "urban_change_clip = if(counties, urban_change_01_19)"
+r.mapcalc "urban_change85_05_clip = if(counties_subset, urban_change_85_05)"
 
 # to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
-r.report map=urban_change_01_19 units=h,c,p
+r.report map=urban_change_85_05 units=h,c,p
 
-# sample the predictors and the response variable with 10,000 random points in undeveloped areas and 2,000 points in developed area ####### RATIO WILL CHANGE IN OUR STUDY AREA ------> Note, npoints kept the same for initial test
-r.sample.category input=urban_change_clip output=sampling sampled=counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities npoints=10000,2000
+# sample the predictors and the response variable with 100,000 random points in undeveloped areas and 20,000 points in developed area
+r.sample.category input=urban_change85_05_clip output=sampling_pts sampled=counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities npoints=100000,20000
 
 # attribute table can be exported as CSV (optional)
-v.db.select map=sampling columns=urban_change_clip,counties,devpressure_0_5,devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities separator=comma file=samples.csv
+v.db.select map=sampling_pts columns=urban_change85_05_clip,counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities separator=comma file=samples_2005.csv
 
 ### DEVELOPMENT POTENTIAL
 
-# find the best model for predicting urbanization with r.futures.potential by trying different combinations of predictions, e.g:
-r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
-# or
-r.futures.potential input=sampling output=potential.csv columns=devpressure_1,road_dens_perc,dist_to_water_km,dist_to_protected_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
+# find the best model for predicting urbanization with r.futures.potential by trying different combinations of predictions
+
+# test 1
+r.futures.potential input=sampling_pts output=potential_2005.csv columns=devpressure_g05_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 2
+r.futures.potential input=sampling_pts output=potential_2005_2.csv columns=devpressure_g05_s30,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 3
+r.futures.potential input=sampling_pts output=potential_2005_3.csv columns=devpressure_g15_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 4
+r.futures.potential input=sampling_pts output=potential_2005_4.csv columns=devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
 
 # can also run R dredge function to find best model; can specify minimum and maximum number of predictors that should be used in the final model
-r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties min_variables=4 max_variables=7
+# r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties min_variables=4 max_variables=7
 
-# potential for tutorial created using:
+### FINAL MODEL ###
 r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,ag_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties --o
 
 #################### TEST RUN ##########################
