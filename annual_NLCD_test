@@ -129,6 +129,18 @@ r.futures.devpressure -n input=urban_2005 output=devpressure_g05_s30 method=grav
 r.futures.devpressure -n input=urban_2005 output=devpressure_g15_s10 method=gravity size=10 gamma=1.5 scaling_factor=1
 # test 4 - gamma 1.5 size 30
 r.futures.devpressure -n input=urban_2005 output=devpressure_g15_s30 method=gravity size=30 gamma=1.5 scaling_factor=1
+# test 5 - gamma 1.5 size 8
+r.futures.devpressure -n input=urban_2005 output=devpressure_g15_s8 method=gravity size=8 gamma=1.5 scaling_factor=1
+# test 6 - gamma 1 size 8
+r.futures.devpressure -n input=urban_2005 output=devpressure_g1_s8 method=gravity size=8 gamma=1 scaling_factor=1
+# test 7 - gamma 2 size 8
+r.futures.devpressure -n input=urban_2005 output=devpressure_g2_s8 method=gravity size=8 gamma=2 scaling_factor=1
+# test 8 - gamma 1 size 10
+r.futures.devpressure -n input=urban_2005 output=devpressure_g1_s10 method=gravity size=10 gamma=1 scaling_factor=1
+# test 9 - gamma 2 size 10
+r.futures.devpressure -n input=urban_2005 output=devpressure_g2_s10 method=gravity size=10 gamma=2 scaling_factor=1
+
+
 # higher gamma means more rapid decrease of development influence with distance; size is hald the size of the moving window
 # lower gamma means that local development influences more distant places
 # two layers with different gamma and size parameters are derived for the potential statistical model
@@ -160,7 +172,7 @@ r.mapcalc "urban_change85_05_clip = if(counties_subset, urban_change_85_05)"
 r.report map=urban_change_85_05 units=h,c,p
 
 # sample the predictors and the response variable with 100,000 random points in undeveloped areas and 20,000 points in developed area
-r.sample.category input=urban_change85_05_clip output=sampling_pts sampled=counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities npoints=100000,20000
+r.sample.category input=urban_change85_05_clip output=sampling_pts sampled=counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,devpressure_g15_s8,devpressure_g1_s8,devpressure_g2_s8,devpressure_g1_s10,devpressure_g2_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities npoints=100000,20000 --overwrite
 
 # attribute table can be exported as CSV (optional)
 v.db.select map=sampling_pts columns=urban_change85_05_clip,counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities separator=comma file=samples_2005.csv
@@ -181,17 +193,41 @@ r.futures.potential input=sampling_pts output=potential_2005_3.csv columns=devpr
 # test 4
 r.futures.potential input=sampling_pts output=potential_2005_4.csv columns=devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
 
+# test 5
+r.futures.potential input=sampling_pts output=potential_2005_5.csv columns=devpressure_g15_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 6
+r.futures.potential input=sampling_pts output=potential_2005_6.csv columns=devpressure_g1_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 7
+r.futures.potential input=sampling_pts output=potential_2005_7.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 8
+r.futures.potential input=sampling_pts output=potential_2005_8.csv columns=devpressure_g1_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 9
+r.futures.potential input=sampling_pts output=potential_2005_9.csv columns=devpressure_g2_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 10 ### here I am using the best devpressure variation from above and testing different combos of fixed effects
+r.futures.potential input=sampling_pts output=potential_2005_10.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005 developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 11
+r.futures.potential input=sampling_pts output=potential_2005_11.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 12 
+r.futures.potential input=sampling_pts output=potential_2005_12.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_interchanges_km developed_column=urban_change85_05_clip subregions_column=counties_subset
+
+# test 13 
+r.futures.potential input=sampling_pts output=potential_2005_13.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005 developed_column=urban_change85_05_clip subregions_column=counties_subset
+
 # can also run R dredge function to find best model; can specify minimum and maximum number of predictors that should be used in the final model
 # r.futures.potential -d input=sampling output=potential.csv columns=devpressure_1,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties min_variables=4 max_variables=7
 
-### FINAL MODEL ###
-r.futures.potential  input=sampling output=potential.csv columns=devpressure_1,slope,forest_smooth_perc,ag_smooth_perc,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties --o
-
-#################### TEST RUN ##########################
-r.futures.potential input=sampling output=potential.csv columns=devpressure_0_5,slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities developed_column=urban_change_clip subregions_column=counties
+#### FINAL MODEL: TEST 11 ###
+# r.futures.potential input=sampling_pts output=potential_2005_final.csv columns=devpressure_g2_s8,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities developed_column=urban_change85_05_clip
 
 # visualize the initial development potential (suitability) raster from predictors and model coefficients; serves to evaluate development potential model
-r.futures.potsurface input=potential.csv subregions=counties output=suitability
+r.futures.potsurface input=potential_2005_11.csv subregions=counties_subset output=suitability_2005
 r.colors map=suitability color=byr
 
 ### DEMAND SUBMODEL
