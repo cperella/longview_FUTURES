@@ -250,7 +250,11 @@ r.mask roads_mask -i
 ','.join([str(i) for i in range(2019, 2100)])
 
 # finally, create the demand file:
-r.futures.demand development=urban_2001,urban_2006,urban_2011,urban_2016,urban_2019 subregions=counties observed_population=population_trend_sbre.csv projected_population=population_projection_ssp1.csv simulation_times=2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand.pdf demand=demand.csv separator=comma
+r.futures.demand development=urban_1985,urban_1986,urban_1987,urban_1988,urban_1989,urban_1990,urban_1991,urban_1992,urban_1993,urban_1994,urban_1995,urban_1996,urban_1997,urban_1998,urban_1999,urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005 subregions=counties_subset observed_population=population_trend_1985_2005.csv projected_population=population_projection_2006_2024.csv simulation_times=2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=plot_demand_1985_2005.pdf demand=demand_1985_2005.csv separator=comma
+# version starting with 1990 instead of 1985 due to population issues
+r.futures.demand development=urban_1990,urban_1991,urban_1992,urban_1993,urban_1994,urban_1995,urban_1996,urban_1997,urban_1998,urban_1999,urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005 subregions=counties_subset observed_population=population_trend_1990_2005.csv projected_population=population_projection_2006_2024.csv simulation_times=2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=plot_demand_1990_2005.pdf demand=demand_1990_2005.csv separator=comma
+
+
 
 # working directory should now contain files plot_demand.png and demand.csv
 
@@ -265,7 +269,7 @@ r.mask -r
 
 # patch calibration is done to derive patches of new development by comparing historical and recent development
 # we can run this on the entire area and keep only patches with a minimum size of 2 cells (2 x 30 x 30 m = 1800)
-r.futures.calib development_start=urban_2001 development_end=urban_2019 subregions=counties patch_sizes=patches.txt patch_threshold=1800  -l
+r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=counties_subset patch_sizes=patches_1985_2005.txt patch_threshold=1800  -l
 
 # resulting patches.txt file contains the distribution of sizes of all found patches of development
 
@@ -277,13 +281,33 @@ plt.hist(patches, 2000)
 plt.xlim(0,50)
 plt.show()
 
-# start the calibration for the best parameters of patch shape (there are also suggested parameters) ########### LOOK INTO MANUAL FOR MORE ABOUT THIS STEP, WHICH IS SKIPPED IN THE TUTORIAL
+###### Georgina suggested choosing 3-5 counties to calibrate with: something more high-denisity (Buncombe, NC [37021]), something more suburban (Blount, TN [47009]; Cherokee, GA [13057]), something more rural (Jackson [37099], Ashe [37009])
+
+# start the calibration for the best parameters of patch shape (there are also suggested parameters)
 # select only one county to begin calibration
 
-#v.to.rast input=counties type=area where="FIPS == 37183" use=attr attribute_column=FIPS output=calib_county
-#g.region raster=calib_county zoom=calib_county
+# Buncombe
+v.to.rast input=counties_subset type=area where="FIPS == 37021" use=attr attribute_column=FIPS output=calib_county_buncombe
+g.region raster=calib_county_buncombe zoom=calib_county_buncombe
 
-r.futures.calib development_start=urban_2001 development_end=urban_2019 subregions=counties patch_sizes=patches_new.txt calibration_results=calib_new.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities demand=demand.csv devpot_params=potential.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_0_5 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
+r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_buncombe patch_sizes=patches_buncombe.txt calibration_results=calib_buncombe.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
+
+g.region raster=counties_subset -p
+
+# Blount
+v.to.rast input=counties_subset type=area where="FIPS == 47009" use=attr attribute_column=FIPS output=calib_county_blount
+g.region raster=calib_county_blount zoom=calib_county_blount
+
+r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_blount patch_sizes=patches_blount.txt calibration_results=calib_blount.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
+
+g.region raster=counties_subset -p
+
+# Jackson
+v.to.rast input=counties_subset type=area where="FIPS == 37009" use=attr attribute_column=FIPS output=calib_county_jackson
+g.region raster=calib_county_jackson zoom=calib_county_jackson
+
+r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_jackson patch_sizes=patches_jackson.txt calibration_results=calib_jackson.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
+
 
 ### FUTURES SIMULATION
 
