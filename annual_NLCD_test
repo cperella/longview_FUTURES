@@ -292,7 +292,7 @@ g.region raster=calib_county_buncombe zoom=calib_county_buncombe
 
 r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_buncombe patch_sizes=patches_buncombe.txt calibration_results=calib_buncombe.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
 
-g.region raster=counties_subset -p
+g.region vector=counties_subset -p
 
 # Blount
 v.to.rast input=counties_subset type=area where="FIPS == 47009" use=attr attribute_column=FIPS output=calib_county_blount
@@ -300,10 +300,10 @@ g.region raster=calib_county_blount zoom=calib_county_blount
 
 r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_blount patch_sizes=patches_blount.txt calibration_results=calib_blount.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
 
-g.region raster=counties_subset -p
+g.region vector=counties_subset -p
 
 # Jackson
-v.to.rast input=counties_subset type=area where="FIPS == 37009" use=attr attribute_column=FIPS output=calib_county_jackson
+v.to.rast input=counties_subset type=area where="FIPS == 37099" use=attr attribute_column=FIPS output=calib_county_jackson
 g.region raster=calib_county_jackson zoom=calib_county_jackson
 
 r.futures.calib development_start=urban_1985 development_end=urban_2005 subregions=calib_county_jackson patch_sizes=patches_jackson.txt calibration_results=calib_jackson.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities demand=demand_1985_2005.csv devpot_params=potential_2005_11.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=30 gamma=0.5 scaling_factor=0.1
@@ -312,7 +312,7 @@ r.futures.calib development_start=urban_1985 development_end=urban_2005 subregio
 ### FUTURES SIMULATION
 
 # switch from calib_county region back to previous region
-#g.region raster=landuse_2019 -p
+g.region vector=counties_subset -p
 
 # everything is ready to run r.futures.pga:
-r.futures.pga subregions=counties developed=urban_2019 predictors=slope,road_dens_perc,forest_smooth_perc,dist_to_water_km,dist_to_protected_km,dist_interchanges_km,travel_time_cities devpot_params=potential.csv development_pressure=devpressure_0_5 n_dev_neighbourhood=10 development_pressure_approach=gravity gamma=1 scaling_factor=1 demand=demand.csv discount_factor=0.3 compactness_mean=0.2 compactness_range=0.1 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final output_series=final
+r.futures.parallelpga nprocs=1 repeat=5 subregions=counties_subset developed=urban_2005 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities devpot_params=potential_2005_11.csv development_pressure=devpressure_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_1985_2005.csv discount_factor=0.5 compactness_mean=0.9 compactness_range=0.05 patch_sizes=patches_1985_2005.txt num_neighbors=4 seed_search=random random_seed=1 output=final_2006_2024 output_series=final_2006_2024
