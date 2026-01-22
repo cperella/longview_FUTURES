@@ -1,4 +1,5 @@
 ##### FUTURES code for testing annual NLCD product; setting up FUTURES to run from 1985-2005, then running the model through 2024 to validate against real-world development
+##### Note: this was all done in the "annual_NLCD" mapset, with some layers copied from PERMANENT; many PERMANENT layers were changed to "_old" to avoid confusion
 
 ### INITIAL STEPS AND DATA PREPARATION
 
@@ -337,3 +338,58 @@ r.mapcalc "sum_plus_urban = final_2006_2024_step18_sum + urban_2005" - this does
 # divide by number of raster layers (5) to get a final probability surface
 
 ## note: need to add float() ahead of rasters and use 5.0 for integer to force float calc
+
+### Validation code can be found at https://github.com/ncsu-landscape-dynamics/GRASS_FUTURES/blob/validation-methods/r.futures/r.futures.validation/r.futures.validation.html
+
+### to run this module, needed to remove the current grass add on and reinstall
+# g.extension operation=remove extension=r.futures -f
+### then run
+# g.extension extension=r.futures url=https://github.com/ncsu-landscape-dynamics/GRASS_FUTURES/tree/validation-methods
+
+### created text file called "rules.txt" to convert simulation result into a binary developed/undeveloped raster using the following:
+###-1 = 0
+###0 thru 100 = 1
+
+# then, reclassified one of my simulations (the "final" output for run 5)
+r.reclass input=final_2006_2024_run5 output=final_2006_2024_run5_reclass rules=rules.txt
+
+# the next step uses the observed landuse as a reference, so then I imported NLCD 2024 and reclassified it into a binary developed/undeveloped raster
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif
+
+# reclassified protected areas from null to 0 for raster calc
+r.null map=pad_new null=0
+
+# raster calc to convert to binary 
+r.mapcalc "urban_2024 = if(landuse_2024 >= 21 && landuse_2024 <= 24, 1, if(landuse_2024 == 11 || landuse_2024 >= 90 || pad_new, null(), 0))"
+
+# clip "reference" and "original" to counties subset
+r.mapcalc "urban_2024_clip = if(counties_subset, urban_2024)"
+r.mapcalc "urban_2005_clip = if(counties_subset, urban_2005)"
+
+# run the validation modules!
+### starting with run 5
+# tabular
+r.futures.validation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip
+# grid
+r.futures.gridvalidation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip kappasimulation=kappasim region=grid
+
+### run 4
+# tabular
+r.reclass input=final_2006_2024_run4 output=final_2006_2024_run4_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run4_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 3
+# tabular
+r.reclass input=final_2006_2024_run3 output=final_2006_2024_run3_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run3_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 2
+# tabular
+r.reclass input=final_2006_2024_run2 output=final_2006_2024_run2_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run2_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 1
+# tabular
+r.reclass input=final_2006_2024_run1 output=final_2006_2024_run1_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run1_reclass reference=urban_2024_clip original=urban_2005_clip
+
