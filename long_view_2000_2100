@@ -1,0 +1,98 @@
+##### FUTURES code for EBCI Long View Project; Using data from 2000-2014 for calibration, 2015-2024 for validation, and 2025-2100 for future projections.
+##### Note: this is done in the "EBCI" mapset, with some layers copied from PERMANENT or "annual_NLCD"
+
+### INITIAL STEPS AND DATA PREPARATION
+
+# input data
+  # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
+    # name = elevation_30m
+    # slope derived previously from elevation_30m; copied from PERMANENT mapset
+  # NLCD for 2000-2024: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+    # name = landuse_[year]
+  # roads from NLCD Impervious Descriptor: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+    # name = roads
+  # county boundaries from TIGER:
+    # name = counties_final
+    # copied from annual_NLCD mapset
+  # protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
+    # name = protected_areas_4_1
+  # cities (cities were derived using the centroids of Urban Areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units)
+    # name = cities_5000
+    # copied from PERMANENT mapset
+  # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
+    # names = population_trend.csv and population_projection.csv
+
+# set working directory
+
+# set computational region to extent covering study area
+g.region vector=counties_final -p
+
+# import remaining landuse rasters (2000-2005, 2024 copied from annual_NLCD mapset)
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2006_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2006
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2007_CU_C1V1\Annual_NLCD_LndCov_2007_CU_C1V1.tif output=landuse_2007
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2008_CU_C1V1\Annual_NLCD_LndCov_2008_CU_C1V1.tif output=landuse_2008
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2009_CU_C1V1\Annual_NLCD_LndCov_2009_CU_C1V1.tif output=landuse_2009
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2010_CU_C1V1\Annual_NLCD_LndCov_2010_CU_C1V1.tif output=landuse_2010
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2011_CU_C1V1\Annual_NLCD_LndCov_2011_CU_C1V1.tif output=landuse_2011
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2012_CU_C1V1\Annual_NLCD_LndCov_2012_CU_C1V1.tif output=landuse_2012
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2013_CU_C1V1\Annual_NLCD_LndCov_2013_CU_C1V1.tif output=landuse_2013
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2014_CU_C1V1\Annual_NLCD_LndCov_2014_CU_C1V1.tif output=landuse_2014
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2015_CU_C1V1\Annual_NLCD_LndCov_2015_CU_C1V1.tif output=landuse_2015
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2016_CU_C1V1\Annual_NLCD_LndCov_2016_CU_C1V1.tif output=landuse_2016
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2017_CU_C1V1\Annual_NLCD_LndCov_2017_CU_C1V1.tif output=landuse_2017
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2018_CU_C1V1\Annual_NLCD_LndCov_2018_CU_C1V1.tif output=landuse_2018
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2019_CU_C1V1\Annual_NLCD_LndCov_2019_CU_C1V1.tif output=landuse_2019
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2020_CU_C1V1\Annual_NLCD_LndCov_2020_CU_C1V1.tif output=landuse_2020
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2021_CU_C1V1\Annual_NLCD_LndCov_2021_CU_C1V1.tif output=landuse_2021
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2022_CU_C1V1\Annual_NLCD_LndCov_2022_CU_C1V1.tif output=landuse_2022
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2023_CU_C1V1\Annual_NLCD_LndCov_2023_CU_C1V1.tif output=landuse_2023
+
+# import roads data
+# first for 2014
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2014_CU_C1V1\Annual_NLCD_ImpDsc_2014_CU_C1V1.tif output=imperv_2014
+# convert to binary roads/non-roads
+r.mapcalc "roads_2014 = if(imperv_2014 == 1, 1, 0)"
+r.null map=roads_2014 setnull=0
+
+
+# then for 2024
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2024_CU_C1V1\Annual_NLCD_ImpDsc_2024_CU_C1V1.tif output=imperv_2024
+# convert to binary roads/non-roads
+r.mapcalc "roads_2024_mask = if(imperv_2024 == 1, 1, 0)"
+
+
+# import new version protected_areas
+v.import extent=region input=C:\Users\cdperell\Documents\The Long View Project files\FUTURES data\PAD_US_shapefiles\pad_new.shp layer=pad_new output=protected_areas
+# convert protected areas from vector to raster 
+# set NULLs to zeros for simple raster algebra in next step
+v.to.rast input=protected_areas output=protected_areas use=val
+r.null map=protected_areas null=0
+
+# create binary rasters of developed/undeveloped areas for annual NLCD product from 2006-2023
+# developed or urbanized areas derived from NLCD categories 21-24
+# developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
+r.mapcalc "urban_2006 = if(landuse_2006 >= 21 && landuse_2006 <= 24, 1, if(landuse_2006 == 11 || landuse_2006 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2007 = if(landuse_2007 >= 21 && landuse_2007 <= 24, 1, if(landuse_2007 == 11 || landuse_2007 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2008 = if(landuse_2008 >= 21 && landuse_2008 <= 24, 1, if(landuse_2008 == 11 || landuse_2008 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2009 = if(landuse_2009 >= 21 && landuse_2009 <= 24, 1, if(landuse_2009 == 11 || landuse_2009 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2010 = if(landuse_2010 >= 21 && landuse_2010 <= 24, 1, if(landuse_2010 == 11 || landuse_2010 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2012 = if(landuse_2012 >= 21 && landuse_2012 <= 24, 1, if(landuse_2012 == 11 || landuse_2012 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2013 = if(landuse_2013 >= 21 && landuse_2013 <= 24, 1, if(landuse_2013 == 11 || landuse_2013 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2014 = if(landuse_2014 >= 21 && landuse_2014 <= 24, 1, if(landuse_2014 == 11 || landuse_2014 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2015 = if(landuse_2015 >= 21 && landuse_2015 <= 24, 1, if(landuse_2015 == 11 || landuse_2015 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2016 = if(landuse_2016 >= 21 && landuse_2016 <= 24, 1, if(landuse_2016 == 11 || landuse_2016 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2017 = if(landuse_2017 >= 21 && landuse_2017 <= 24, 1, if(landuse_2017 == 11 || landuse_2017 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2018 = if(landuse_2018 >= 21 && landuse_2018 <= 24, 1, if(landuse_2018 == 11 || landuse_2018 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2019 = if(landuse_2019 >= 21 && landuse_2019 <= 24, 1, if(landuse_2019 == 11 || landuse_2019 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2020 = if(landuse_2020 >= 21 && landuse_2020 <= 24, 1, if(landuse_2020 == 11 || landuse_2020 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2021 = if(landuse_2021 >= 21 && landuse_2021 <= 24, 1, if(landuse_2021 == 11 || landuse_2021 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2022 = if(landuse_2022 >= 21 && landuse_2022 <= 24, 1, if(landuse_2022 == 11 || landuse_2022 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2023 = if(landuse_2023 >= 21 && landuse_2023 <= 24, 1, if(landuse_2023 == 11 || landuse_2023 >= 90 || protected_areas, null(), 0))"
+
+
+
+# mask roads so they don't influence per capita land demand
+# set 0s as NULL for mask
+r.null map=roads_2024_mask@EBCI setnull=0 
+r.mask roads_2024_mask -i
