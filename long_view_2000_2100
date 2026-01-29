@@ -90,7 +90,22 @@ r.mapcalc "urban_2021 = if(landuse_2021 >= 21 && landuse_2021 <= 24, 1, if(landu
 r.mapcalc "urban_2022 = if(landuse_2022 >= 21 && landuse_2022 <= 24, 1, if(landuse_2022 == 11 || landuse_2022 >= 90 || protected_areas, null(), 0))"
 r.mapcalc "urban_2023 = if(landuse_2023 >= 21 && landuse_2023 <= 24, 1, if(landuse_2023 == 11 || landuse_2023 >= 90 || protected_areas, null(), 0))"
 
+### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
 
+## derive distance from lakes/rivers
+# first extract "open water" category from NLCD
+r.mapcalc "water_2014 = if(landuse_2014 == 11, 1, null())"
+# then compute distance and set color table
+r.grow.distance input=water_2014 distance=dist_to_water_2014
+r.colors -n map=dist_to_water_2014 color=blues
+
+## derive distnace from protected areas
+# use raster of protected areas from above but set NULLs to zero
+r.null map=protected_areas setnull=0
+r.grow.distance input=protected_areas distance=dist_to_protected_2014
+r.colors map=dist_to_protected_2014 color=gyr
+
+### stopped here on 1/29
 
 # mask roads so they don't influence per capita land demand
 # set 0s as NULL for mask
