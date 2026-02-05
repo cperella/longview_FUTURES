@@ -77,7 +77,7 @@ r.mapcalc "water_2005 = if(landuse_2005 == 11, 1, null())"
 r.grow.distance input=water_2005 distance=dist_to_water_2005
 r.colors -n map=dist_to_water_2005 color=blues
 
-## derive distnace from protected areas ### NOTE: using pad_new file, which is from v4.1 and merged all states that overlap with comp region, but did NOT use to create binary urban rasters, only dist_to_protected
+## derive distance from protected areas ### NOTE: using pad_new file, which is from v4.1 and merged all states that overlap with comp region, but did NOT use to create binary urban rasters, only dist_to_protected
 # use raster of protected areas from above but set NULLs to zero
 r.null map=pad_new setnull=0
 r.grow.distance input=pad_new distance=dist_to_protected_2005
