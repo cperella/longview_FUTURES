@@ -105,7 +105,70 @@ r.null map=protected_areas setnull=0
 r.grow.distance input=protected_areas distance=dist_to_protected_2014
 r.colors map=dist_to_protected_2014 color=gyr
 
-### stopped here on 1/29
+## smooth transition between forests and other land uses
+r.mapcalc "forest_2014 = if(landuse_2014 >= 41 && landuse_2014 <= 43, 1, 0)"
+r.neighbors -c input=forest_2014 output=forest_smooth_2014 size=15 method=average
+r.colors map=forest_smooth color=ndvi
+
+## smooth transition between agriculture and other land uses
+r.mapcalc "agriculture_2014 = if(landuse_2014 >= 81 && landuse_2014 <= 82, 1, 0)"
+r.neighbors -c input=agriculture_2014 output=ag_smooth_2014 size=15 method=average
+
+## used previous travel time to cities (using TIGER shapefiles) and distance to interchanges - has differentiation of road types
+
+## compute road density (using NLCD impervious/roads layer)
+r.null map=roads_2014 null=0
+r.neighbors -c input=roads_2014 output=road_dens_2014 size=25 method=average
+
+## compute distance to all roads
+r.grow.distance -m input=roads_2014 distance=dist_roads_2014
+
+## include SVI data using SVI score at the county level; downloaded CSV, joined with counties in ArcGIS pro, then imported into GRASS (used 2014 and 2022 data)
+v.to.rast input=svi_counties_2014 type=area output=svi_counties_rast_2014 use=attr attribute_column=F2014_RPL_
+
+### DEVELOPMENT PRESSURE
+
+# compute development pressure with r.futures.devpressure module
+# development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
+# test different gamma and neighborhood sizes (tested fewer than when testing for annual NLCD)
+# test 1 - gamma 2 size 8
+r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g2_s8 method=gravity size=8 gamma=2 scaling_factor=1
+# test 2 - gamma 2 size 10
+r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g2_s10 method=gravity size=10 gamma=2 scaling_factor=1
+# test 3 - gamma 1.5 size 8
+r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g15_s8 method=gravity size=8 gamma=1.5 scaling_factor=1
+
+### RESCALING VARIABLES
+
+# rescale some of the input variables to percentage or km
+r.mapcalc "dist_to_water_km_2014 = dist_to_water_2014 / 1000"
+r.mapcalc "dist_to_protected_km_2014 = dist_to_protected_2014 / 1000"
+#r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
+r.mapcalc "road_dens_2014_perc = road_dens_2014 * 100"
+r.mapcalc "forest_smooth_perc_2014 = forest_smooth_2014 * 100"
+r.mapcalc "ag_smooth_perc_2014 = ag_smooth_2014 * 100"
+r.mapcalc "dist_roads_2014_km = dist_roads_2014 / 1000"
+r.mapcalc "svi_counties_perc_2014 = svi_counties_rast_2014 * 100"
+
+### SAMPLING
+
+# To build multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 2000 and 2014.
+r.mapcalc "urban_change_00_14 = if(urban_2014 == 1, if(urban_2000 == 0, 1, null()), 0)" --overwrite
+
+# to sample only in the counties of the study area, clip the development layer
+r.mapcalc "urban_change_00_14_clip = if(counties_final, urban_change_00_14)" --overwrite
+
+# to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
+r.report map=urban_change_00_14_clip units=h,c,p
+
+# sample the predictors and the response variable with n random points in undeveloped areas and n points in developed area
+# first tested with 300,000 in undeveloped areas, 30,000 in developed
+# then tested with 130,000 in undeveloped areas, 26,000 (original tutorial for 3 counties multiplied by 13 for 39 counties)
+r.sample.category input=urban_change85_05_clip output=sampling_pts sampled=counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,devpressure_g15_s8,devpressure_g1_s8,devpressure_g2_s8,devpressure_g1_s10,devpressure_g2_s10,slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities npoints=100000,20000 --overwrite
+
+# attribute table can be exported as CSV (optional)
+v.db.select map=sampling_pts columns=urban_change85_05_clip,counties_subset,devpressure_g05_s10,devpressure_g05_s30,devpressure_g15_s10,devpressure_g15_s30,slope,road_dens_perc,forest_smooth_perc_2005,dist_to_water_km_2005,dist_to_protected_km_2005,dist_interchanges_km,travel_time_cities separator=comma file=samples_2005.csv
+
 
 # mask roads so they don't influence per capita land demand
 # set 0s as NULL for mask
