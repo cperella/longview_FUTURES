@@ -170,6 +170,7 @@ r.mapcalc "dist_forest_km_2014_log = log(dist_forest_km_2014)"
 r.mapcalc "dist_ag_km_2014 = dist_ag_2014 / 1000"
 r.mapcalc "dist_ag_km_2014_log = log(dist_ag_km_2014)"
 
+## imported SVI vectors for 2014 and 2022, converted to raster
 
 ### SAMPLING
 
@@ -191,9 +192,12 @@ r.sample.category input=urban_change_00_14_clip output=sampling_00_14_130k sampl
 v.db.select map=sampling_00_14_300k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_300k.csv --overwrite
 v.db.select map=sampling_00_14_130k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_130k.csv --overwrite
 
-##### sampling points w new predictors #####
+##### UPDATED sampling points w NEW PREDICTORS #####
 
-r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k_newv sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_counties_perc_2014,svi_counties_2014 npoints=130000,26000 --overwrite
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr npoints=130000,26000 --overwrite
+
+v.db.select map=sampling_00_14_156k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr separator=comma file=samples_00_14_156k.csv --overwrite
+
 
 ### DEVELOPMENT POTENTIAL
 
