@@ -195,8 +195,12 @@ v.db.select map=sampling_00_14_130k columns=urban_change_00_14_clip,counties_fin
 ##### UPDATED sampling points w NEW PREDICTORS #####
 
 r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr npoints=130000,26000 --overwrite
-
 v.db.select map=sampling_00_14_156k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr separator=comma file=samples_00_14_156k.csv --overwrite
+
+
+#trying this one again to include and test with all predictors
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,dist_interchanges_km,travel_time_cities,svi_2014_censustr npoints=100000,30000 --overwrite
+v.db.select map=sampling_00_14_130k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,dist_interchanges_km,travel_time_cities,svi_2014_censustr separator=comma file=samples_00_14_130k.csv --overwrite
 
 
 ### DEVELOPMENT POTENTIAL
@@ -248,18 +252,28 @@ r.futures.potential input=sampling_00_14_156k_newv output=potential_2014_test14.
 # test 15
 r.futures.potential input=sampling_00_14_156k_newv output=potential_2014_test15.csv columns=devpressure_2014_g2_s8,slope_log,dist_forest_log_km_2014,dist_ag_log_km_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_roads_2014_km developed_column=urban_change_00_14_clip subregions_column=counties_final
 
-### FINAL MODEL TEST 10 ###
-r.futures.potential input=sampling_00_14_130k output=potential_2014_test10.csv columns=devpressure_2014_g2_s10,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,dist_roads_2014_km developed_column=urban_change_00_14_clip subregions_column=counties_final
+# final model (test 23)
+r.futures.potential input=sampling_00_14_130k output=potential_2014_final.csv columns=devpressure_2014_g2_s8,slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc developed_column=urban_change_00_14_clip subregions_column=counties_final
 
 r.futures.potsurface input=potential_2014_test10.csv subregions=counties_final output=suitability_2014
 r.colors map=suitability_2014 color=byr
 
 ### DEMAND SUBMODEL
 
+# first for hindcast through 2024
+
 # mask roads so they don't influence per capita land demand
 # set 0s as NULL for mask
 r.null map=roads_2014 setnull=0 
 r.mask roads_2014 -i
+
+### NOTE: demand plots turn out better when using NO MASK
+### might be worth considering using fewer data points (every 2 years? 3 years?)
+
+# create demand file
+r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014 subregions=counties_final observed_population=pop_trend_seer_2000_2014.csv projected_population=pop_proj_seer_2015_2024.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=plot_demand_seer_2000_2024.pdf demand=demand_seer_2000_2024.csv separator=comma
+
+
 
 # create the demand file - SSP1
 r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014 subregions=counties_final observed_population=population_trend_2000_2014.csv projected_population=population_proj_ssp1_finalcounties.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand_2000_2100_ssp1.pdf demand=demand_2000_2100_ssp1.csv separator=comma
