@@ -1,9 +1,9 @@
 ##### FUTURES code for EBCI Long View Project; Using data from 2000-2014 for calibration, 2015-2024 for validation, and 2025-2100 for future projections.
 ##### Note: this is done in the "EBCI" mapset, with some layers copied from PERMANENT or "annual_NLCD"
 
-### INITIAL STEPS AND DATA PREPARATION
+####################################### INITIAL STEPS AND DATA PREPARATION #######################################
 
-# input data
+## input data
   # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
     # name = elevation_30m
     # slope derived previously from elevation_30m; copied from PERMANENT mapset
@@ -22,12 +22,12 @@
   # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
     # names = population_trend.csv and population_projection.csv
 
-# set working directory
+## set working directory
 
-# set computational region to extent covering study area
+## set computational region to extent covering study area
 g.region vector=counties_final -p
 
-# import remaining landuse rasters (2000-2005, 2024 copied from annual_NLCD mapset)
+## import remaining landuse rasters (2000-2005, 2024 copied from annual_NLCD mapset)
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2006_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2006
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2007_CU_C1V1\Annual_NLCD_LndCov_2007_CU_C1V1.tif output=landuse_2007
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2008_CU_C1V1\Annual_NLCD_LndCov_2008_CU_C1V1.tif output=landuse_2008
@@ -47,13 +47,14 @@ r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2021_CU_C1V1
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2022_CU_C1V1\Annual_NLCD_LndCov_2022_CU_C1V1.tif output=landuse_2022
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2023_CU_C1V1\Annual_NLCD_LndCov_2023_CU_C1V1.tif output=landuse_2023
 
-# import roads data
+
+## import roads data
+
 # first for 2014
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2014_CU_C1V1\Annual_NLCD_ImpDsc_2014_CU_C1V1.tif output=imperv_2014
 # convert to binary roads/non-roads
 r.mapcalc "roads_2014 = if(imperv_2014 == 1, 1, 0)"
 r.null map=roads_2014 setnull=0
-
 
 # then for 2024
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2024_CU_C1V1\Annual_NLCD_ImpDsc_2024_CU_C1V1.tif output=imperv_2024
@@ -61,14 +62,14 @@ r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2024_CU_C1V1
 r.mapcalc "roads_2024_mask = if(imperv_2024 == 1, 1, 0)"
 
 
-# import new version protected_areas
+## import new version protected_areas
 v.import extent=region input=C:\Users\cdperell\Documents\The Long View Project files\FUTURES data\PAD_US_shapefiles\pad_new.shp layer=pad_new output=protected_areas
 # convert protected areas from vector to raster 
 # set NULLs to zeros for simple raster algebra in next step
 v.to.rast input=protected_areas output=protected_areas use=val
 r.null map=protected_areas null=0
 
-# create binary rasters of developed/undeveloped areas for annual NLCD product from 2006-2023
+## create binary rasters of developed/undeveloped areas for annual NLCD product from 2006-2023
 # developed or urbanized areas derived from NLCD categories 21-24
 # developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
 r.mapcalc "urban_2006 = if(landuse_2006 >= 21 && landuse_2006 <= 24, 1, if(landuse_2006 == 11 || landuse_2006 >= 90 || protected_areas, null(), 0))"
@@ -90,7 +91,11 @@ r.mapcalc "urban_2021 = if(landuse_2021 >= 21 && landuse_2021 <= 24, 1, if(landu
 r.mapcalc "urban_2022 = if(landuse_2022 >= 21 && landuse_2022 <= 24, 1, if(landuse_2022 == 11 || landuse_2022 >= 90 || protected_areas, null(), 0))"
 r.mapcalc "urban_2023 = if(landuse_2023 >= 21 && landuse_2023 <= 24, 1, if(landuse_2023 == 11 || landuse_2023 >= 90 || protected_areas, null(), 0))"
 
-### POTENTIAL SUBMODEL (DERIVE PREDICTORS)
+#####################################################################################################################
+####                                        HINDCAST PERIOD (2000-2014)                                         #####
+#####################################################################################################################
+
+####################################### POTENTIAL SUBMODEL (DERIVE PREDICTORS) #######################################
 
 ## derive distance from lakes/rivers
 # first extract "open water" category from NLCD
@@ -153,24 +158,22 @@ r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g15_s8 method=
 ### RESCALING VARIABLES
 
 # rescale some of the input variables to percentage or km - for distances, convert to km, then log-transform
-r.mapcalc expression="slope_log = log(slope)"
+r.mapcalc expression="slope_log = log(slope + 1)" --overwrite
 r.mapcalc "dist_to_water_km_2014 = dist_to_water_2014 / 1000"
-r.mapcalc "dist_to_water_km_2014_log = log(dist_to_water_km_2014)"
+r.mapcalc "dist_to_water_km_2014_log = log(dist_to_water_km_2014 + 1)" --overwrite
 r.mapcalc "dist_to_protected_km_2014 = dist_to_protected_2014 / 1000"
-r.mapcalc "dist_to_protected_km_2014_log = log(dist_to_protected_km_2014)"
+r.mapcalc "dist_to_protected_km_2014_log = log(dist_to_protected_km_2014 + 1)" --overwrite
 #r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
 r.mapcalc "road_dens_2014_perc = road_dens_2014 * 100"
 r.mapcalc "forest_smooth_perc_2014 = forest_smooth_2014 * 100"
 r.mapcalc "ag_smooth_perc_2014 = ag_smooth_2014 * 100"
 r.mapcalc "dist_roads_2014_km = dist_roads_2014 / 1000"
-r.mapcalc "dist_roads_2014_km_log = log(dist_roads_2014_km)"
+r.mapcalc "dist_roads_2014_km_log = log(dist_roads_2014_km + 1)" --overwrite
 r.mapcalc "svi_counties_perc_2014 = svi_counties_rast_2014 * 100"
 r.mapcalc "dist_forest_km_2014 = dist_forest_2014 / 1000"
-r.mapcalc "dist_forest_km_2014_log = log(dist_forest_km_2014)"
+r.mapcalc "dist_forest_km_2014_log = log(dist_forest_km_2014 + 1)" --overwrite
 r.mapcalc "dist_ag_km_2014 = dist_ag_2014 / 1000"
-r.mapcalc "dist_ag_km_2014_log = log(dist_ag_km_2014)"
-
-## imported SVI vectors for 2014 and 2022, converted to raster
+r.mapcalc "dist_ag_km_2014_log = log(dist_ag_km_2014 + 1)" --overwrite
 
 ### SAMPLING
 
@@ -252,10 +255,13 @@ r.futures.potential input=sampling_00_14_156k_newv output=potential_2014_test14.
 # test 15
 r.futures.potential input=sampling_00_14_156k_newv output=potential_2014_test15.csv columns=devpressure_2014_g2_s8,slope_log,dist_forest_log_km_2014,dist_ag_log_km_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_roads_2014_km developed_column=urban_change_00_14_clip subregions_column=counties_final
 
+########## A new set of tests was done in R ########
+
 # final model (test 23)
 r.futures.potential input=sampling_00_14_130k output=potential_2014_final.csv columns=devpressure_2014_g2_s8,slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc developed_column=urban_change_00_14_clip subregions_column=counties_final
 
-r.futures.potsurface input=potential_2014_test10.csv subregions=counties_final output=suitability_2014
+r.futures.potsurface input=potential_2014_final.csv subregions=counties_final output=suitability_2014
+
 r.colors map=suitability_2014 color=byr
 
 ### DEMAND SUBMODEL
@@ -268,12 +274,121 @@ r.null map=roads_2014 setnull=0
 r.mask roads_2014 -i
 
 ### NOTE: demand plots turn out better when using NO MASK
-### might be worth considering using fewer data points (every 2 years? 3 years?)
+
 
 # create demand file
 r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014 subregions=counties_final observed_population=pop_trend_seer_2000_2014.csv projected_population=pop_proj_seer_2015_2024.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=plot_demand_seer_2000_2024.pdf demand=demand_seer_2000_2024.csv separator=comma
 
+### also did a test using only every other year of historical data just to see what's up but didn't improve results because many counties peak around 2008-2011
+r.futures.demand development=urban_2000,urban_2002,urban_2004,urban_2006,urban_2008,urban_2010,urban_2012,urban_2014 subregions=counties_final observed_population=pop_trend_seer_2000_2014_evenyrs.csv projected_population=pop_proj_seer_2015_2024.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=plot_demand_seer_2000_2024_evenyrs.pdf demand=demand_seer_2000_2024_evenyrs.csv separator=comma
 
+# I'm going to try to mask the roads so they don't affect patch size and shape
+# set 0s as NULL for mask
+r.null map=roads_2014 setnull=0 
+r.mask roads_2014 -i
+
+
+### PATCH CALIBRATION
+
+# start with overall study area
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=counties_final patch_sizes=patches.txt patch_threshold=1800  -l
+
+# Buncombe
+v.to.rast input=counties_final type=area where="FIPS == 37021" use=attr attribute_column=FIPS output=buncombe
+g.region raster=buncombe zoom=buncombe
+
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=buncombe patch_sizes=patches_buncombe_2000_2014.txt calibration_results=calib_buncombe_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc demand=demand_seer_2000_2024_nomask.csv devpot_params=potential_2014_final.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+# Blount
+v.to.rast input=counties_final type=area where="FIPS == 47009" use=attr attribute_column=FIPS output=blount
+g.region raster=blount zoom=blount
+
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=blount patch_sizes=patches_blount_2000_2014.txt calibration_results=calib_blount_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc demand=demand_seer_2000_2024_nomask.csv devpot_params=potential_2014_final.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+# Jackson
+v.to.rast input=counties_subset type=area where="FIPS == 37099" use=attr attribute_column=FIPS output=jackson
+g.region raster=jackson zoom=jackson
+
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=jackson patch_sizes=patches_jackson_2000_2014.txt calibration_results=calib_jackson_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc demand=demand_seer_2000_2024_nomask.csv devpot_params=potential_2014_final.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+
+#####################################################################################################################
+########                                   SIMULATION PERIOD (2025-2100)                                     ########
+#####################################################################################################################
+
+####################################### POTENTIAL SUBMODEL (DERIVE PREDICTORS) ######################################
+
+## derive distance from lakes/rivers
+# first extract "open water" category from NLCD
+r.mapcalc "water_2024 = if(landuse_2024 == 11, 1, null())"
+# then compute distance and set color table
+r.grow.distance input=water_2024 distance=dist_to_water_2024
+r.colors -n map=dist_to_water_2024 color=blues
+
+## derive distnace from protected areas
+# use raster of protected areas from above but set NULLs to zero
+r.null map=protected_areas setnull=0
+r.grow.distance input=protected_areas distance=dist_to_protected_2024
+r.colors map=dist_to_protected_2024 color=gyr
+
+## smooth transition between forests and other land uses
+r.mapcalc "forest_2024 = if(landuse_2024 >= 41 && landuse_2024 <= 43, 1, 0)"
+r.neighbors -c input=forest_2024 output=forest_smooth_2024 size=15 method=average
+r.colors map=forest_smooth color=ndvi
+
+## smooth transition between agriculture and other land uses
+r.mapcalc "agriculture_2024 = if(landuse_2024 >= 81 && landuse_2024 <= 82, 1, 0)"
+r.neighbors -c input=agriculture_2024 output=ag_smooth_2024 size=15 method=average
+
+## compute road density (using NLCD impervious/roads layer)
+r.null map=roads_2024 null=0
+r.neighbors -c input=roads_2024 output=road_dens_2024 size=25 method=average
+
+## compute distance to all roads
+r.grow.distance -m input=roads_2024 distance=dist_roads_2024
+
+## distance to forest land
+# using regular forest 
+r.mapcalc "forest_2024_ext = if(landuse_2024 >= 41 && landuse_2024 <= 43, 1, null())"
+r.grow.distance input=forest_2024_ext distance=dist_forest_2024
+
+## distance to ag land
+# using regular ag
+r.mapcalc "agriculture_2024_ext = if(landuse_2024 >= 81 && landuse_2024 <= 82, 1, null())"
+r.grow.distance input=agriculture_2024_ext distance=dist_ag_2024
+
+### DEVELOPMENT PRESSURE
+
+## compute development pressure with r.futures.devpressure module
+# development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
+# gamma 2 size 8
+r.futures.devpressure -n input=urban_2024 output=devpressure_2024_g2_s8 method=gravity size=8 gamma=2 scaling_factor=1
+
+### RESCALING VARIABLES
+
+## rescale some of the input variables to percentage or km - for distances, convert to km, then log-transform
+r.mapcalc "dist_to_water_km_2024 = dist_to_water_2024 / 1000"
+r.mapcalc "dist_to_water_km_2024_log = log(dist_to_water_km_2024 + 1)"
+r.mapcalc "road_dens_2024_perc = road_dens_2024 * 100"
+r.mapcalc "dist_roads_2024_km = dist_roads_2024 / 1000"
+r.mapcalc "dist_roads_2024_km_log = log(dist_roads_2024_km + 1)"
+r.mapcalc "dist_forest_km_2024 = dist_forest_2024 / 1000"
+r.mapcalc "dist_forest_km_2024_log = log(dist_forest_km_2024 + 1)"
+r.mapcalc "dist_ag_km_2024 = dist_ag_2024 / 1000"
+r.mapcalc "dist_ag_km_2024_log = log(dist_ag_km_2024 + 1)"
+
+### SAMPLING
+
+# To build multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 2000 and 2024.
+r.mapcalc "urban_change_00_24 = if(urban_2024 == 1, if(urban_2000 == 0, 1, null()), 0)"
+
+# to sample only in the counties of the study area, clip the development layer
+r.mapcalc "urban_change_00_24_clip = if(counties_final, urban_change_00_24)"
+
+
+
+
+################### FUTURE FORECAST #####################
 
 # create the demand file - SSP1
 r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014 subregions=counties_final observed_population=population_trend_2000_2014.csv projected_population=population_proj_ssp1_finalcounties.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand_2000_2100_ssp1.pdf demand=demand_2000_2100_ssp1.csv separator=comma
@@ -283,16 +398,4 @@ r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2
 
 
 
-### PATCH CALIBRATION
 
-# Buncombe
-v.to.rast input=counties_final type=area where="FIPS == 37021" use=attr attribute_column=FIPS output=calib_buncombe
-g.region raster=buncombe zoom=buncombe
-
-r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=buncombe patch_sizes=patches_buncombe_new.txt calibration_results=calib_buncombe_new.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,dist_roads_2014_km demand=demand_2000_2100_ssp1.csv devpot_params=potential_2014_test10.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s10 development_pressure_approach=gravity n_dev_neighbourhood=10 gamma=2 scaling_factor=1
-
-# Blount
-v.to.rast input=counties_final type=area where="FIPS == 47009" use=attr attribute_column=FIPS output=blount
-g.region raster=blount zoom=blount
-
-r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=blount patch_sizes=patches_blount_new.txt calibration_results=calib_blount_new.csv patch_threshold=1800 repeat=10 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,dist_roads_2014_km demand=demand_2000_2100_ssp1.csv devpot_params=potential_2014_test10.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s10 development_pressure_approach=gravity n_dev_neighbourhood=10 gamma=2 scaling_factor=1
