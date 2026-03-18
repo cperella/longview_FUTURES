@@ -302,6 +302,72 @@ g.region raster=jackson zoom=jackson
 
 r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=jackson patch_sizes=patches_jackson_2000_2014.txt calibration_results=calib_jackson_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc demand=demand_seer_2000_2024_nomask.csv devpot_params=potential_2014_final.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
 
+## remove mask
+r.mask -r
+
+### FUTURES SIMULATION
+
+# switch back to full region
+g.region vector=counties_subset -p
+
+# everything is ready to run r.futures.pga: #########NEEDS TO BE UPDATED
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_subset developed=urban_2024 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc devpot_params=potential_2014_final.csv development_pressure=devpressure_2014_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_seer_2000_2024_nomask.csv discount_factor=0.5 compactness_mean=0.9 compactness_range=0.05 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=final_2015_2024 output_series=final_2015_2024
+
+### Validation code can be found at https://github.com/ncsu-landscape-dynamics/GRASS_FUTURES/blob/validation-methods/r.futures/r.futures.validation/r.futures.validation.html
+
+### to run this module, needed to remove the current grass add on and reinstall
+# g.extension operation=remove extension=r.futures -f
+### then run
+# g.extension extension=r.futures url=https://github.com/ncsu-landscape-dynamics/GRASS_FUTURES/tree/validation-methods
+
+### created text file called "rules.txt" to convert simulation result into a binary developed/undeveloped raster using the following:
+###-1 = 0
+###0 thru 100 = 1
+
+# then, reclassified one of my simulations (the "final" output for run 5)
+r.reclass input=final_2006_2024_run5 output=final_2006_2024_run5_reclass rules=rules.txt
+
+# the next step uses the observed landuse as a reference, so then I imported NLCD 2024 and reclassified it into a binary developed/undeveloped raster
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif
+
+# reclassified protected areas from null to 0 for raster calc
+r.null map=pad_new null=0
+
+# raster calc to convert to binary 
+r.mapcalc "urban_2024 = if(landuse_2024 >= 21 && landuse_2024 <= 24, 1, if(landuse_2024 == 11 || landuse_2024 >= 90 || pad_new, null(), 0))"
+
+# clip "reference" and "original" to counties subset
+r.mapcalc "urban_2024_clip = if(counties_subset, urban_2024)"
+r.mapcalc "urban_2005_clip = if(counties_subset, urban_2005)"
+
+# run the validation modules!
+### starting with run 5
+# tabular
+r.futures.validation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip
+# grid
+r.futures.gridvalidation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip region=grid
+### look into the Figure of Merit stuff...
+
+### run 4
+# tabular
+r.reclass input=final_2006_2024_run4 output=final_2006_2024_run4_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run4_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 3
+# tabular
+r.reclass input=final_2006_2024_run3 output=final_2006_2024_run3_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run3_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 2
+# tabular
+r.reclass input=final_2006_2024_run2 output=final_2006_2024_run2_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run2_reclass reference=urban_2024_clip original=urban_2005_clip
+
+### run 1
+# tabular
+r.reclass input=final_2006_2024_run1 output=final_2006_2024_run1_reclass rules=rules.txt
+r.futures.validation simulated=final_2006_2024_run1_reclass reference=urban_2024_clip original=urban_2005_clip
+
 
 #####################################################################################################################
 ########                                   SIMULATION PERIOD (2025-2100)                                     ########
@@ -411,13 +477,22 @@ r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2
 # SSP5
 r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014,urban_2015,urban_2016,urban_2017,urban_2018,urban_2019,urban_2020,urban_2021,urban_2022,urban_2023,urban_2024 subregions=counties_final observed_population=pop_trend_seer_2000_2024.csv projected_population=pop_proj_ssp5_finalcounties_2025_2100.csv simulation_times=2025,2026,2027,2028,2029,2030,2031,2032,2033,2034,2035,2036,2037,2038,2039,2040,2041,2042,2043,2044,2045,2046,2047,2048,2049,2050,2051,2052,2053,2054,2055,2056,2057,2058,2059,2060,2061,2062,2063,2064,2065,2066,2067,2068,2069,2070,2071,2072,2073,2074,2075,2076,2077,2078,2079,2080,2081,2082,2083,2084,2085,2086,2087,2088,2089,2090,2091,2092,2093,2094,2095,2096,2097,2098,2099,2100 plot=plot_demand_ssp5.pdf demand=demand_ssp5.csv separator=comma
 
+### PATCH CALIBRATION
 
 # I'm going to try to mask the roads so they don't affect patch size and shape
 # set 0s as NULL for mask
-r.null map=roads_2014 setnull=0 
-r.mask roads_2014 -i
+r.null map=roads_2024 setnull=0 
+r.mask roads_2024 -i
 
+## generate new patch library (but no need to recalibrate, keeping all parameters the same
+r.futures.calib development_start=urban_2000 development_end=urban_2024 subregions=counties_final patch_sizes=patches_sim.txt patch_threshold=1800  -l
 
+## remove mask
+r.mask -r
 
+### FUTURES SIMULATION
+
+# everything is ready to run r.futures.pga: #########NEEDS TO BE UPDATED
+r.futures.parallelpga nprocs=1 repeat=5 subregions=counties_subset developed=urban_2005 predictors=slope,road_dens_perc,forest_smooth_perc_2005,ag_smooth_perc_2005,dist_to_water_km_2005,travel_time_cities devpot_params=potential_2005_11.csv development_pressure=devpressure_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_1985_2005.csv discount_factor=0.5 compactness_mean=0.9 compactness_range=0.05 patch_sizes=patches_1985_2005.txt num_neighbors=4 seed_search=random random_seed=1 output=final_2006_2024 output_series=final_2006_2024
 
 
