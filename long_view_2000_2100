@@ -331,7 +331,7 @@ r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urb
 ###0 thru 100 = 1
 
 # then, reclassified one of my simulations (the "final" output for run 5)
-r.reclass input=final_2006_2024_run5 output=final_2006_2024_run5_reclass rules=rules.txt
+r.reclass input=hindcast_2015_2024_run1 output=hindcast_2015_2024_run1_reclass rules=rules.txt
 
 # the next step uses the observed landuse as a reference, so then I imported NLCD 2024 and reclassified it into a binary developed/undeveloped raster
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif
@@ -343,15 +343,15 @@ r.null map=pad_new null=0
 r.mapcalc "urban_2024 = if(landuse_2024 >= 21 && landuse_2024 <= 24, 1, if(landuse_2024 == 11 || landuse_2024 >= 90 || pad_new, null(), 0))"
 
 # clip "reference" and "original" to counties subset
-r.mapcalc "urban_2024_clip = if(counties_subset, urban_2024)"
-r.mapcalc "urban_2005_clip = if(counties_subset, urban_2005)"
+r.mapcalc "urban_2024_clip = if(counties_final, urban_2024)"
+r.mapcalc "urban_2000_clip = if(counties_final, urban_2000)"
 
 # run the validation modules!
-### starting with run 5
+### starting with run 1
 # tabular
 r.futures.validation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip
 # grid
-r.futures.gridvalidation simulated=final_2006_2024_run5_reclass reference=urban_2024_clip original=urban_2005_clip region=grid
+r.futures.gridvalidation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip region=grid
 ### look into the Figure of Merit stuff...
 
 ### run 4
