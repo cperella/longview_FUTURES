@@ -60,6 +60,7 @@ r.null map=roads_2014 setnull=0
 r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2024_CU_C1V1\Annual_NLCD_ImpDsc_2024_CU_C1V1.tif output=imperv_2024
 # convert to binary roads/non-roads
 r.mapcalc "roads_2024_mask = if(imperv_2024 == 1, 1, 0)"
+r.null map=roads_2024 setnull=0
 
 
 ## import new version protected_areas
@@ -257,10 +258,10 @@ r.futures.potential input=sampling_00_14_156k_newv output=potential_2014_test15.
 
 ########## A new set of tests was done in R ########
 
-# final model (test 23)
-r.futures.potential input=sampling_00_14_130k output=potential_2014_final.csv columns=devpressure_2014_g2_s8,slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc developed_column=urban_change_00_14_clip subregions_column=counties_final
+# final model
+r.futures.potential input=sampling_00_14_130k output=potential_2014_final.csv columns=devpressure_2014_g2_s8,slope,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc developed_column=urban_change_00_14_clip subregions_column=counties_final --overwrite
 
-r.futures.potsurface input=potential_2014_final.csv subregions=counties_final output=suitability_2014
+r.futures.potsurface input=potential_2014_final.csv subregions=counties_final output=suitability_2014 --overwrite
 
 r.colors map=suitability_2014 color=byr
 
@@ -437,15 +438,17 @@ r.mapcalc "hind_run49_bin = if(hindcast_2015_2024_run49 == 0, null(), if(hindcas
 r.mapcalc "hind_run50_bin = if(hindcast_2015_2024_run50 == 0, null(), if(hindcast_2015_2024_run50 >= 2, 1, 0))"
 
 # for each cell, count the number of runs in which it was developed
-r.series input=run1_bin_1,run1_bin_2,run1_bin_3,...,run1_bin_50 output=dev_count method=sum
+r.series input=hind_run1_bin_test,hind_run2_bin,hind_run3_bin,hind_run4_bin,hind_run5_bin,hind_run6_bin,hind_run7_bin,hind_run8_bin,hind_run9_bin,hind_run10_bin,hind_run11_bin,hind_run12_bin,hind_run13_bin,hind_run14_bin,hind_run15_bin,hind_run16_bin,hind_run17_bin,hind_run18_bin,hind_run19_bin,hind_run20_bin,hind_run21_bin,hind_run22_bin,hind_run23_bin,hind_run24_bin,hind_run25_bin,hind_run26_bin,hind_run27_bin,hind_run28_bin,hind_run29_bin,hind_run30_bin,hind_run31_bin,hind_run32_bin,hind_run33_bin,hind_run34_bin,hind_run35_bin,hind_run36_bin,hind_run37_bin,hind_run38_bin,hind_run39_bin,hind_run40_bin,hind_run41_bin,hind_run42_bin,hind_run43_bin,hind_run44_bin,hind_run45_bin,hind_run46_bin,hind_run47_bin,hind_run48_bin,hind_run49_bin,hind_run50_bin output=hind_dev_count method=sum
 
 # convert to percent probability
-r.mapcalc "dev_prob = (dev_count / 50.0) * 100.0"
+r.mapcalc "hind_dev_prob = (hind_dev_count / 50.0) * 100.0"
 
 # reclassify to probability bins
-r.mapcalc "dev_prob_class = if(dev_prob < 2, 0, \
-                        if(dev_prob < 25, 1, \
-                        if(dev_prob <= 50, 2, 3)))"
+r.mapcalc "hind_dev_prob_class = if(hind_dev_prob < 2, 0, if(hind_dev_prob < 25, 1, if(hind_dev_prob <= 50, 2, 3)))"
+
+# to export to ArcGIS Pro
+r.mapcalc "urban_2014_clip = if(counties_final, urban_2014)"
+
 
 #####################################################################################################################
 ########                                   SIMULATION PERIOD (2025-2100)                                     ########
@@ -465,15 +468,6 @@ r.colors -n map=dist_to_water_2024 color=blues
 r.null map=protected_areas setnull=0
 r.grow.distance input=protected_areas distance=dist_to_protected_2024
 r.colors map=dist_to_protected_2024 color=gyr
-
-## smooth transition between forests and other land uses
-r.mapcalc "forest_2024 = if(landuse_2024 >= 41 && landuse_2024 <= 43, 1, 0)"
-r.neighbors -c input=forest_2024 output=forest_smooth_2024 size=15 method=average
-r.colors map=forest_smooth color=ndvi
-
-## smooth transition between agriculture and other land uses
-r.mapcalc "agriculture_2024 = if(landuse_2024 >= 81 && landuse_2024 <= 82, 1, 0)"
-r.neighbors -c input=agriculture_2024 output=ag_smooth_2024 size=15 method=average
 
 ## compute road density (using NLCD impervious/roads layer)
 r.null map=roads_2024 null=0
@@ -520,8 +514,8 @@ r.mapcalc "urban_change_00_24 = if(urban_2024 == 1, if(urban_2000 == 0, 1, null(
 # to sample only in the counties of the study area, clip the development layer
 r.mapcalc "urban_change_00_24_clip = if(counties_final, urban_change_00_24)"
 
-r.sample.category input=urban_change_00_24_clip output=sampling_00_24_130k sampled=counties_final,devpressure_2024_g2_s8,slope_log,road_dens_2024_perc,dist_forest_km_2024_log,dist_ag_km_2024_log,dist_to_water_km_2024_log,dist_roads_2024_km_log npoints=100000,30000 --overwrite
-v.db.select map=sampling_00_24_130k columns=urban_change_00_24_clip,counties_final,devpressure_2024_g2_s8,devpressure_2024_g2_s8,slope_log,road_dens_2024_perc,dist_forest_km_2024_log,dist_ag_km_2024_log,dist_to_water_km_2024_log,dist_roads_2024_km_log separator=comma file=samples_00_24_130k.csv --overwrite
+r.sample.category input=urban_change_00_24_clip output=sampling_00_24_130k sampled=counties_final,devpressure_2024_g2_s8,slope,slope_log,road_dens_2024_perc,dist_forest_km_2024_log,dist_ag_km_2024_log,dist_to_water_km_2024_log,dist_roads_2024_km_log,svi_2022_censustr npoints=100000,30000 --overwrite
+v.db.select map=sampling_00_24_130k columns=urban_change_00_24_clip,counties_final,devpressure_2024_g2_s8,slope,slope_log,road_dens_2024_perc,dist_forest_km_2024_log,dist_ag_km_2024_log,dist_to_water_km_2024_log,dist_roads_2024_km_log,svi_2022_censustr separator=comma file=samples_00_24_130k.csv --overwrite
 
 ### DEVELOPMENT POTENTIAL
 
