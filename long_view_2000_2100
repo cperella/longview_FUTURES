@@ -312,13 +312,13 @@ r.futures.calib development_start=urban_2000 development_end=urban_2014 subregio
 
 g.region vector=counties_final -p
 
-### FUTURES SIMULATION
+######## FUTURES SIMULATION #########
 
 # switch back to full region
 g.region vector=counties_subset -p
 
 # everything is ready to run r.futures.pga:
-r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2014 predictors=slope_log,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc devpot_params=potential_2014_final.csv development_pressure=devpressure_2014_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_seer_2000_2024_nomask.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=hindcast_2015_2024 output_series=hindcast_2015_2024
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2014 predictors=slope,dist_forest_km_2014_log,dist_to_water_km_2014_log,dist_ag_km_2014_log,dist_roads_2014_km_log,road_dens_2014_perc devpot_params=potential_2014_final.csv development_pressure=devpressure_2014_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_seer_2000_2024_nomask.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches.txt num_neighbors=4 seed_search=random random_seed=1 output=hindcast_2015_2024 output_series=hindcast_2015_2024
 
 ### Validation code can be found at https://github.com/ncsu-landscape-dynamics/GRASS_FUTURES/blob/validation-methods/r.futures/r.futures.validation/r.futures.validation.html
 
@@ -567,9 +567,17 @@ r.mask -r
 # everything is ready to run r.futures.pga: ######### ALL OF THESE NEED TO BE UPDATED WITH CORRECT PATCH PARAMETERS
 
 # SSP1
-r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope_log,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp1.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp1_2025_2100 output_series=ssp1_2025_2100
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp1.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp1_fin output_series=ssp1_fin
 
 # SSP2
-r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope_log,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp2.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp2_2025_2100 output_series=ssp2_2025_2100
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp2.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp2_fin output_series=ssp2_fin
 
+# SSP3
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp3.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp3_fin output_series=ssp3_fin
+
+# SSP4
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp4.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp4_fin output_series=ssp4_fin
+
+# SSP5
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp5.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp5_fin output_series=ssp5_fin
 
