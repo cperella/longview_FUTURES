@@ -725,3 +725,5 @@ r.out.gdal input=ssp5_fin_run24_74@EBCI output=D:\FUTURES\futures_outputs\ssp5_r
 r.out.gdal input=ssp5_fin_run24_75@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2099_buncombe.tif format=GTiff
 
 r.mapcalc "urban_2024_buncombe = if(urban_2024_clip_gray == 0, null(),1)"
+
+
