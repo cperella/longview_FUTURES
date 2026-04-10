@@ -648,6 +648,7 @@ r.proj input=ssp5_dev_prob_class location=SBRE_FUTURES mapset=EBCI output=ssp5_d
 
 r.out.gdal input=ssp5_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp5_dev_prob_class_reproj.tif format=GTiff
 
+
 ### want to focus on Buncombe and Jackson counties for animations of growth
 
 r.mask raster=buncombe
