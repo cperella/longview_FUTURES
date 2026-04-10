@@ -642,6 +642,12 @@ r.mapcalc "ssp5_dev_prob = (ssp5_dev_count / 50.0) * 100.0"
 # reclassify to probability bins
 r.mapcalc "ssp5_dev_prob_class = if(ssp5_dev_prob < 2, 0, if(ssp5_dev_prob < 25, 1, if(ssp5_dev_prob <= 50, 2, 3)))"
 
+### due to projection issues, I created a new location in GRASS which matches the CRS/PRS of the SECAS Blueprint, and I will be reprojecting my outputs to this location before exporting them into ArcGIS
+
+r.proj input=ssp5_dev_prob_class location=SBRE_FUTURES mapset=EBCI output=ssp5_dev_prob_class_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp5_dev_prob_class_reproj.tif format=GTiff
+
 ### want to focus on Buncombe and Jackson counties for animations of growth
 
 r.mask raster=buncombe
