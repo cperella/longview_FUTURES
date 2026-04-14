@@ -644,9 +644,35 @@ r.mapcalc "ssp5_dev_prob_class = if(ssp5_dev_prob < 2, 0, if(ssp5_dev_prob < 25,
 
 ### due to projection issues, I created a new location in GRASS which matches the CRS/PRS of the SECAS Blueprint, and I will be reprojecting my outputs to this location before exporting them into ArcGIS
 
+#ssp5 dev prob class
+
 r.proj input=ssp5_dev_prob_class location=SBRE_FUTURES mapset=EBCI output=ssp5_dev_prob_class_reproj method=nearest resolution=30
 
 r.out.gdal input=ssp5_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp5_dev_prob_class_reproj.tif format=GTiff
+
+#ssp5 dev prob
+
+r.proj input=ssp5_dev_prob location=SBRE_FUTURES mapset=EBCI output=ssp5_dev_prob_class_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp5_dev_prob_reproj.tif format=GTiff
+
+#ssp2 dev prob class
+
+r.proj input=ssp2_dev_prob_class location=SBRE_FUTURES mapset=EBCI output=ssp2_dev_prob_class_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp2_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_class_reproj.tif format=GTiff
+
+#ssp2 dev prob
+
+r.proj input=ssp2_dev_prob location=SBRE_FUTURES mapset=EBCI output=ssp2_dev_prob_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp2_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_reproj.tif format=GTiff
+
+# urban 2024
+
+r.proj input=urban_2024_clip_gray location=SBRE_FUTURES mapset=EBCI output=urban_2024_reproj method=nearest resolution=30
+
+r.out.gdal input=urban_2024_reproj output=D:\FUTURES\futures_outputs\urban_2024_reproj.tif format=GTiff
 
 
 ### want to focus on Buncombe and Jackson counties for animations of growth
