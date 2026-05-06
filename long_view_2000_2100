@@ -579,6 +579,12 @@ r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urb
 # SSP5
 r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp5.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp5_fin output_series=ssp5_fin
 
+### FUTURES SIMULATION for SSP5 with SPRAWL PARAMTER
+# From tutorial: Scenarios involving policies that encourage infill versus sprawl can be explored using the incentive_power parameter of r.futures.pga, which uses a power function to transform the evenness of the probability gradient in POTENTIAL.
+# You can change the power to a number between 0.25 and 4 to test urban sprawl/infill scenarios. Higher power leads to infill behavior, lower power to urban sprawl.
+
+
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp5.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 incentive_power=0.25 output=ssp5_sprawl_fin output_series=ssp5_sprawl_fin
 
 ########### Results analysis ###########
 
