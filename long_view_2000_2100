@@ -766,3 +766,55 @@ r.out.gdal input=ssp5_fin_run24_75@EBCI output=D:\FUTURES\futures_outputs\ssp5_r
 r.mapcalc "urban_2024_buncombe = if(urban_2024_clip_gray == 0, null(),1)"
 
 
+####### copy files from broken mapset to new mapset
+
+g.copy raster=ssp5_sprawl_fin_run1@EBCI,ssp5_sprawl_fin_run1 
+g.copy raster=ssp5_sprawl_fin_run2@EBCI,ssp5_sprawl_fin_run2 &
+g.copy raster=ssp5_sprawl_fin_run3@EBCI,ssp5_sprawl_fin_run3 &
+g.copy raster=ssp5_sprawl_fin_run4@EBCI,ssp5_sprawl_fin_run4 &
+g.copy raster=ssp5_sprawl_fin_run5@EBCI,ssp5_sprawl_fin_run5 &
+g.copy raster=ssp5_sprawl_fin_run6@EBCI,ssp5_sprawl_fin_run6 &
+g.copy raster=ssp5_sprawl_fin_run7@EBCI,ssp5_sprawl_fin_run7 &
+g.copy raster=ssp5_sprawl_fin_run8@EBCI,ssp5_sprawl_fin_run8 &
+g.copy raster=ssp5_sprawl_fin_run9@EBCI,ssp5_sprawl_fin_run9 &
+g.copy raster=ssp5_sprawl_fin_run10@EBCI,ssp5_sprawl_fin_run10 &
+g.copy raster=ssp5_sprawl_fin_run11@EBCI,ssp5_sprawl_fin_run11 &
+g.copy raster=ssp5_sprawl_fin_run12@EBCI,ssp5_sprawl_fin_run12 &
+g.copy raster=ssp5_sprawl_fin_run13@EBCI,ssp5_sprawl_fin_run13 &
+g.copy raster=ssp5_sprawl_fin_run14@EBCI,ssp5_sprawl_fin_run14 &
+g.copy raster=ssp5_sprawl_fin_run15@EBCI,ssp5_sprawl_fin_run15 &
+g.copy raster=ssp5_sprawl_fin_run16@EBCI,ssp5_sprawl_fin_run16 &
+g.copy raster=ssp5_sprawl_fin_run17@EBCI,ssp5_sprawl_fin_run17 &
+g.copy raster=ssp5_sprawl_fin_run18@EBCI,ssp5_sprawl_fin_run18 &
+g.copy raster=ssp5_sprawl_fin_run19@EBCI,ssp5_sprawl_fin_run19 &
+g.copy raster=ssp5_sprawl_fin_run20@EBCI,ssp5_sprawl_fin_run20 &
+g.copy raster=ssp5_sprawl_fin_run21@EBCI,ssp5_sprawl_fin_run21 &
+g.copy raster=ssp5_sprawl_fin_run22@EBCI,ssp5_sprawl_fin_run22 &
+g.copy raster=ssp5_sprawl_fin_run23@EBCI,ssp5_sprawl_fin_run23 &
+g.copy raster=ssp5_sprawl_fin_run24@EBCI,ssp5_sprawl_fin_run24 &
+g.copy raster=ssp5_sprawl_fin_run25@EBCI,ssp5_sprawl_fin_run25 &
+g.copy raster=ssp5_sprawl_fin_run26@EBCI,ssp5_sprawl_fin_run26 &
+g.copy raster=ssp5_sprawl_fin_run27@EBCI,ssp5_sprawl_fin_run27 &
+g.copy raster=ssp5_sprawl_fin_run28@EBCI,ssp5_sprawl_fin_run28 &
+g.copy raster=ssp5_sprawl_fin_run29@EBCI,ssp5_sprawl_fin_run29 &
+g.copy raster=ssp5_sprawl_fin_run30@EBCI,ssp5_sprawl_fin_run30 &
+g.copy raster=ssp5_sprawl_fin_run31@EBCI,ssp5_sprawl_fin_run31 &
+g.copy raster=ssp5_sprawl_fin_run32@EBCI,ssp5_sprawl_fin_run32 &
+g.copy raster=ssp5_sprawl_fin_run33@EBCI,ssp5_sprawl_fin_run33 &
+g.copy raster=ssp5_sprawl_fin_run34@EBCI,ssp5_sprawl_fin_run34 &
+g.copy raster=ssp5_sprawl_fin_run35@EBCI,ssp5_sprawl_fin_run35 &
+g.copy raster=ssp5_sprawl_fin_run36@EBCI,ssp5_sprawl_fin_run36 &
+g.copy raster=ssp5_sprawl_fin_run37@EBCI,ssp5_sprawl_fin_run37 &
+g.copy raster=ssp5_sprawl_fin_run38@EBCI,ssp5_sprawl_fin_run38 &
+g.copy raster=ssp5_sprawl_fin_run39@EBCI,ssp5_sprawl_fin_run39 &
+g.copy raster=ssp5_sprawl_fin_run40@EBCI,ssp5_sprawl_fin_run40 &
+g.copy raster=ssp5_sprawl_fin_run41@EBCI,ssp5_sprawl_fin_run41 &
+g.copy raster=ssp5_sprawl_fin_run42@EBCI,ssp5_sprawl_fin_run42 &
+g.copy raster=ssp5_sprawl_fin_run43@EBCI,ssp5_sprawl_fin_run43 &
+g.copy raster=ssp5_sprawl_fin_run44@EBCI,ssp5_sprawl_fin_run44 &
+g.copy raster=ssp5_sprawl_fin_run45@EBCI,ssp5_sprawl_fin_run45 &
+g.copy raster=ssp5_sprawl_fin_run46@EBCI,ssp5_sprawl_fin_run46 &
+g.copy raster=ssp5_sprawl_fin_run47@EBCI,ssp5_sprawl_fin_run47 &
+g.copy raster=ssp5_sprawl_fin_run48@EBCI,ssp5_sprawl_fin_run48 &
+g.copy raster=ssp5_sprawl_fin_run49@EBCI,ssp5_sprawl_fin_run49 &
+g.copy raster=ssp5_sprawl_fin_run50@EBCI,ssp5_sprawl_fin_run50
