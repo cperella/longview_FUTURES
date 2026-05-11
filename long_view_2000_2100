@@ -570,11 +570,11 @@ r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urb
 # SSP2
 r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp2.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp2_fin output_series=ssp2_fin
 
-# SSP3
-r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp3.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp3_fin output_series=ssp3_fin
+## NOT RUNNING THIS SCENARIO # SSP3
+## NOT RUNNING THIS SCENARIO r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp3.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp3_fin output_series=ssp3_fin
 
-# SSP4
-r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp4.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp4_fin output_series=ssp4_fin
+## NOT RUNNING THIS SCENARIO # SSP4
+## NOT RUNNING THIS SCENARIO r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp4.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp4_fin output_series=ssp4_fin
 
 # SSP5
 r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp5.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 output=ssp5_fin output_series=ssp5_fin
@@ -583,10 +583,15 @@ r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urb
 # From tutorial: Scenarios involving policies that encourage infill versus sprawl can be explored using the incentive_power parameter of r.futures.pga, which uses a power function to transform the evenness of the probability gradient in POTENTIAL.
 # You can change the power to a number between 0.25 and 4 to test urban sprawl/infill scenarios. Higher power leads to infill behavior, lower power to urban sprawl.
 
-
 r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp5.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 incentive_power=0.25 output=ssp5_sprawl_fin output_series=ssp5_sprawl_fin
 
+### FUTURES SIMULATION for SSP1 with INFILL PARAMTER
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties_final developed=urban_2024 predictors=slope,dist_forest_km_2024_log,dist_to_water_km_2024_log,dist_ag_km_2024_log,dist_roads_2024_km_log,road_dens_2024_perc devpot_params=potential_2024_final.csv development_pressure=devpressure_2024_g2_s8 n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=demand_ssp1.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=patches_sim.txt num_neighbors=4 seed_search=random random_seed=1 incentive_power=4 output=ssp1_sprawl_fin output_series=ssp1_sprawl_fin
+
+
 ########### Results analysis ###########
+
+### For SSP5 results, create a binary raster; areas that were already developed in 2024 become null, areas that remained undeveloped become 0, new development becomes 1
 
 r.mapcalc "ssp5_run1_bin = if(ssp5_fin_run1 == 0, null(), if(ssp5_fin_run1 == -1, 0, 1))"
 r.mapcalc "ssp5_run2_bin = if(ssp5_fin_run2 == 0, null(), if(ssp5_fin_run2 == -1, 0, 1))"
@@ -681,11 +686,15 @@ r.proj input=urban_2024_clip_gray location=SBRE_FUTURES mapset=EBCI output=urban
 r.out.gdal input=urban_2024_reproj output=D:\FUTURES\futures_outputs\urban_2024_reproj.tif format=GTiff
 
 
-### want to focus on Buncombe and Jackson counties for animations of growth
+
+### Export each time step for one stochastic run to create an animation in R. Below, is the code for Buncombe County
 
 r.mask raster=buncombe
 
 g.region raster=buncombe zoom=buncombe
+
+# Export the urban 2024 clipped raster with only the existing development showing in gray as a base map for the animation
+r.mapcalc "urban_2024_buncombe = if(urban_2024_clip_gray == 0, null(),1)"
 
 r.out.gdal input=ssp5_fin_run24_01@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2025_buncombe.tif format=GTiff &
 r.out.gdal input=ssp5_fin_run24_02@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2026_buncombe.tif format=GTiff &
@@ -763,8 +772,6 @@ r.out.gdal input=ssp5_fin_run24_73@EBCI output=D:\FUTURES\futures_outputs\ssp5_r
 r.out.gdal input=ssp5_fin_run24_74@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2098_buncombe.tif format=GTiff &
 r.out.gdal input=ssp5_fin_run24_75@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2099_buncombe.tif format=GTiff
 
-r.mapcalc "urban_2024_buncombe = if(urban_2024_clip_gray == 0, null(),1)"
-
 
 ####### copy files from broken mapset to new mapset
 
@@ -818,3 +825,81 @@ g.copy raster=ssp5_sprawl_fin_run47@EBCI,ssp5_sprawl_fin_run47 &
 g.copy raster=ssp5_sprawl_fin_run48@EBCI,ssp5_sprawl_fin_run48 &
 g.copy raster=ssp5_sprawl_fin_run49@EBCI,ssp5_sprawl_fin_run49 &
 g.copy raster=ssp5_sprawl_fin_run50@EBCI,ssp5_sprawl_fin_run50
+
+
+#### Results for SSP5 SPRAWL - same as SSP5 code above
+
+r.mapcalc "ssp5_sprawl_run1_bin = if(ssp5_sprawl_fin_run1 == 0, null(), if(ssp5_sprawl_fin_run1 == -1, 0, 1))"
+r.mapcalc "ssp5_sprawl_run2_bin = if(ssp5_sprawl_fin_run2 == 0, null(), if(ssp5_sprawl_fin_run2 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run3_bin = if(ssp5_sprawl_fin_run3 == 0, null(), if(ssp5_sprawl_fin_run3 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run4_bin = if(ssp5_sprawl_fin_run4 == 0, null(), if(ssp5_sprawl_fin_run4 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run5_bin = if(ssp5_sprawl_fin_run5 == 0, null(), if(ssp5_sprawl_fin_run5 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run6_bin = if(ssp5_sprawl_fin_run6 == 0, null(), if(ssp5_sprawl_fin_run6 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run7_bin = if(ssp5_sprawl_fin_run7 == 0, null(), if(ssp5_sprawl_fin_run7 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run8_bin = if(ssp5_sprawl_fin_run8 == 0, null(), if(ssp5_sprawl_fin_run8 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run9_bin = if(ssp5_sprawl_fin_run9 == 0, null(), if(ssp5_sprawl_fin_run9 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run10_bin = if(ssp5_sprawl_fin_run10 == 0, null(), if(ssp5_sprawl_fin_run10 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run11_bin = if(ssp5_sprawl_fin_run11 == 0, null(), if(ssp5_sprawl_fin_run11 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run12_bin = if(ssp5_sprawl_fin_run12 == 0, null(), if(ssp5_sprawl_fin_run12 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run13_bin = if(ssp5_sprawl_fin_run13 == 0, null(), if(ssp5_sprawl_fin_run13 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run14_bin = if(ssp5_sprawl_fin_run14 == 0, null(), if(ssp5_sprawl_fin_run14 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run15_bin = if(ssp5_sprawl_fin_run15 == 0, null(), if(ssp5_sprawl_fin_run15 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run16_bin = if(ssp5_sprawl_fin_run16 == 0, null(), if(ssp5_sprawl_fin_run16 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run17_bin = if(ssp5_sprawl_fin_run17 == 0, null(), if(ssp5_sprawl_fin_run17 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run18_bin = if(ssp5_sprawl_fin_run18 == 0, null(), if(ssp5_sprawl_fin_run18 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run19_bin = if(ssp5_sprawl_fin_run19 == 0, null(), if(ssp5_sprawl_fin_run19 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run20_bin = if(ssp5_sprawl_fin_run20 == 0, null(), if(ssp5_sprawl_fin_run20 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run21_bin = if(ssp5_sprawl_fin_run21 == 0, null(), if(ssp5_sprawl_fin_run21 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run22_bin = if(ssp5_sprawl_fin_run22 == 0, null(), if(ssp5_sprawl_fin_run22 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run23_bin = if(ssp5_sprawl_fin_run23 == 0, null(), if(ssp5_sprawl_fin_run23 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run24_bin = if(ssp5_sprawl_fin_run24 == 0, null(), if(ssp5_sprawl_fin_run24 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run25_bin = if(ssp5_sprawl_fin_run25 == 0, null(), if(ssp5_sprawl_fin_run25 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run26_bin = if(ssp5_sprawl_fin_run26 == 0, null(), if(ssp5_sprawl_fin_run26 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run27_bin = if(ssp5_sprawl_fin_run27 == 0, null(), if(ssp5_sprawl_fin_run27 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run28_bin = if(ssp5_sprawl_fin_run28 == 0, null(), if(ssp5_sprawl_fin_run28 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run29_bin = if(ssp5_sprawl_fin_run29 == 0, null(), if(ssp5_sprawl_fin_run29 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run30_bin = if(ssp5_sprawl_fin_run30 == 0, null(), if(ssp5_sprawl_fin_run30 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run31_bin = if(ssp5_sprawl_fin_run31 == 0, null(), if(ssp5_sprawl_fin_run31 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run32_bin = if(ssp5_sprawl_fin_run32 == 0, null(), if(ssp5_sprawl_fin_run32 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run33_bin = if(ssp5_sprawl_fin_run33 == 0, null(), if(ssp5_sprawl_fin_run33 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run34_bin = if(ssp5_sprawl_fin_run34 == 0, null(), if(ssp5_sprawl_fin_run34 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run35_bin = if(ssp5_sprawl_fin_run35 == 0, null(), if(ssp5_sprawl_fin_run35 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run36_bin = if(ssp5_sprawl_fin_run36 == 0, null(), if(ssp5_sprawl_fin_run36 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run37_bin = if(ssp5_sprawl_fin_run37 == 0, null(), if(ssp5_sprawl_fin_run37 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run38_bin = if(ssp5_sprawl_fin_run38 == 0, null(), if(ssp5_sprawl_fin_run38 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run39_bin = if(ssp5_sprawl_fin_run39 == 0, null(), if(ssp5_sprawl_fin_run39 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run40_bin = if(ssp5_sprawl_fin_run40 == 0, null(), if(ssp5_sprawl_fin_run40 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run41_bin = if(ssp5_sprawl_fin_run41 == 0, null(), if(ssp5_sprawl_fin_run41 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run42_bin = if(ssp5_sprawl_fin_run42 == 0, null(), if(ssp5_sprawl_fin_run42 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run43_bin = if(ssp5_sprawl_fin_run43 == 0, null(), if(ssp5_sprawl_fin_run43 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run44_bin = if(ssp5_sprawl_fin_run44 == 0, null(), if(ssp5_sprawl_fin_run44 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run45_bin = if(ssp5_sprawl_fin_run45 == 0, null(), if(ssp5_sprawl_fin_run45 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run46_bin = if(ssp5_sprawl_fin_run46 == 0, null(), if(ssp5_sprawl_fin_run46 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run47_bin = if(ssp5_sprawl_fin_run47 == 0, null(), if(ssp5_sprawl_fin_run47 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run48_bin = if(ssp5_sprawl_fin_run48 == 0, null(), if(ssp5_sprawl_fin_run48 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run49_bin = if(ssp5_sprawl_fin_run49 == 0, null(), if(ssp5_sprawl_fin_run49 == -1, 0, 1))" &
+r.mapcalc "ssp5_sprawl_run50_bin = if(ssp5_sprawl_fin_run50 == 0, null(), if(ssp5_sprawl_fin_run50 == -1, 0, 1))"
+
+# for each cell, count the number of runs in which it was developed
+r.series input=ssp5_sprawl_run1_bin,ssp5_sprawl_run2_bin,ssp5_sprawl_run3_bin,ssp5_sprawl_run4_bin,ssp5_sprawl_run5_bin,ssp5_sprawl_run6_bin,ssp5_sprawl_run7_bin,ssp5_sprawl_run8_bin,ssp5_sprawl_run9_bin,ssp5_sprawl_run10_bin,ssp5_sprawl_run11_bin,ssp5_sprawl_run12_bin,ssp5_sprawl_run13_bin,ssp5_sprawl_run14_bin,ssp5_sprawl_run15_bin,ssp5_sprawl_run16_bin,ssp5_sprawl_run17_bin,ssp5_sprawl_run18_bin,ssp5_sprawl_run19_bin,ssp5_sprawl_run20_bin,ssp5_sprawl_run21_bin,ssp5_sprawl_run22_bin,ssp5_sprawl_run23_bin,ssp5_sprawl_run24_bin,ssp5_sprawl_run25_bin,ssp5_sprawl_run26_bin,ssp5_sprawl_run27_bin,ssp5_sprawl_run28_bin,ssp5_sprawl_run29_bin,ssp5_sprawl_run30_bin,ssp5_sprawl_run31_bin,ssp5_sprawl_run32_bin,ssp5_sprawl_run33_bin,ssp5_sprawl_run34_bin,ssp5_sprawl_run35_bin,ssp5_sprawl_run36_bin,ssp5_sprawl_run37_bin,ssp5_sprawl_run38_bin,ssp5_sprawl_run39_bin,ssp5_sprawl_run40_bin,ssp5_sprawl_run41_bin,ssp5_sprawl_run42_bin,ssp5_sprawl_run43_bin,ssp5_sprawl_run44_bin,ssp5_sprawl_run45_bin,ssp5_sprawl_run46_bin,ssp5_sprawl_run47_bin,ssp5_sprawl_run48_bin,ssp5_sprawl_run49_bin,ssp5_sprawl_run50_bin output=ssp5_sprawl_dev_count method=sum
+
+# convert to percent probability
+r.mapcalc "ssp5_sprawl_dev_prob = (ssp5_sprawl_dev_count / 50.0) * 100.0"
+
+# reclassify to probability bins
+r.mapcalc "ssp5_sprawl_dev_prob_class = if(ssp5_sprawl_dev_prob < 2, 0, if(ssp5_sprawl_dev_prob < 25, 1, if(ssp5_sprawl_dev_prob <= 50, 2, 3)))"
+
+### Reproject SSP5 sprawl outputs into the SECAS Blueprint GRASS location before exporting them into ArcGIS
+
+#ssp5 sprawl dev prob class
+
+r.proj input=ssp5_sprawl_dev_prob_class location=SBRE_FUTURES mapset=EBCI2 output=ssp5_sprawl_dev_prob_class_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_sprawl_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_class_reproj.tif format=GTiff
+
+#ssp5 sprawl dev prob
+
+r.proj input=ssp5_sprawl_dev_prob location=SBRE_FUTURES mapset=EBCI2 output=ssp5_sprawl_dev_prob_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_sprawl_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_reproj.tif format=GTiff
+
