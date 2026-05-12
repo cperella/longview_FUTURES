@@ -472,6 +472,7 @@ r.null map=roads_2024 null=0
 r.neighbors -c input=roads_2024 output=road_dens_2024 size=25 method=average
 
 ## compute distance to all roads
+r.null map=roads_2024 setnull=0
 r.grow.distance -m input=roads_2024 distance=dist_roads_2024
 
 ## distance to forest land
