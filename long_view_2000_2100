@@ -773,6 +773,135 @@ r.out.gdal input=ssp5_fin_run24_73@EBCI output=D:\FUTURES\futures_outputs\ssp5_r
 r.out.gdal input=ssp5_fin_run24_74@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2098_buncombe.tif format=GTiff &
 r.out.gdal input=ssp5_fin_run24_75@EBCI output=D:\FUTURES\futures_outputs\ssp5_run24_2099_buncombe.tif format=GTiff
 
+### copying ssp5_sprawl run 24 to new mapset
+g.copy raster=ssp5_sprawl_fin_run24_01@EBCI,ssp5_sprawl_fin_run24_01 &
+g.copy raster=ssp5_sprawl_fin_run24_02@EBCI,ssp5_sprawl_fin_run24_02 &
+g.copy raster=ssp5_sprawl_fin_run24_03@EBCI,ssp5_sprawl_fin_run24_03 &
+g.copy raster=ssp5_sprawl_fin_run24_04@EBCI,ssp5_sprawl_fin_run24_04 &
+g.copy raster=ssp5_sprawl_fin_run24_05@EBCI,ssp5_sprawl_fin_run24_05 &
+g.copy raster=ssp5_sprawl_fin_run24_06@EBCI,ssp5_sprawl_fin_run24_06 &
+g.copy raster=ssp5_sprawl_fin_run24_07@EBCI,ssp5_sprawl_fin_run24_07 &
+g.copy raster=ssp5_sprawl_fin_run24_08@EBCI,ssp5_sprawl_fin_run24_08 &
+g.copy raster=ssp5_sprawl_fin_run24_09@EBCI,ssp5_sprawl_fin_run24_09 &
+g.copy raster=ssp5_sprawl_fin_run24_10@EBCI,ssp5_sprawl_fin_run24_10 &
+g.copy raster=ssp5_sprawl_fin_run24_11@EBCI,ssp5_sprawl_fin_run24_11 &
+g.copy raster=ssp5_sprawl_fin_run24_12@EBCI,ssp5_sprawl_fin_run24_12 &
+g.copy raster=ssp5_sprawl_fin_run24_13@EBCI,ssp5_sprawl_fin_run24_13 &
+g.copy raster=ssp5_sprawl_fin_run24_14@EBCI,ssp5_sprawl_fin_run24_14 &
+g.copy raster=ssp5_sprawl_fin_run24_15@EBCI,ssp5_sprawl_fin_run24_15 &
+g.copy raster=ssp5_sprawl_fin_run24_16@EBCI,ssp5_sprawl_fin_run24_16 &
+g.copy raster=ssp5_sprawl_fin_run24_17@EBCI,ssp5_sprawl_fin_run24_17 &
+g.copy raster=ssp5_sprawl_fin_run24_18@EBCI,ssp5_sprawl_fin_run24_18 &
+g.copy raster=ssp5_sprawl_fin_run24_19@EBCI,ssp5_sprawl_fin_run24_19 &
+g.copy raster=ssp5_sprawl_fin_run24_20@EBCI,ssp5_sprawl_fin_run24_20 &
+g.copy raster=ssp5_sprawl_fin_run24_21@EBCI,ssp5_sprawl_fin_run24_21 &
+g.copy raster=ssp5_sprawl_fin_run24_22@EBCI,ssp5_sprawl_fin_run24_22 &
+g.copy raster=ssp5_sprawl_fin_run24_23@EBCI,ssp5_sprawl_fin_run24_23 &
+g.copy raster=ssp5_sprawl_fin_run24_24@EBCI,ssp5_sprawl_fin_run24_24 &
+g.copy raster=ssp5_sprawl_fin_run24_25@EBCI,ssp5_sprawl_fin_run24_25 &
+g.copy raster=ssp5_sprawl_fin_run24_26@EBCI,ssp5_sprawl_fin_run24_26 &
+g.copy raster=ssp5_sprawl_fin_run24_27@EBCI,ssp5_sprawl_fin_run24_27 &
+g.copy raster=ssp5_sprawl_fin_run24_28@EBCI,ssp5_sprawl_fin_run24_28 &
+g.copy raster=ssp5_sprawl_fin_run24_29@EBCI,ssp5_sprawl_fin_run24_29 &
+g.copy raster=ssp5_sprawl_fin_run24_30@EBCI,ssp5_sprawl_fin_run24_30 &
+g.copy raster=ssp5_sprawl_fin_run24_31@EBCI,ssp5_sprawl_fin_run24_31 &
+g.copy raster=ssp5_sprawl_fin_run24_32@EBCI,ssp5_sprawl_fin_run24_32 &
+g.copy raster=ssp5_sprawl_fin_run24_33@EBCI,ssp5_sprawl_fin_run24_33 &
+g.copy raster=ssp5_sprawl_fin_run24_34@EBCI,ssp5_sprawl_fin_run24_34 &
+g.copy raster=ssp5_sprawl_fin_run24_35@EBCI,ssp5_sprawl_fin_run24_35 &
+g.copy raster=ssp5_sprawl_fin_run24_36@EBCI,ssp5_sprawl_fin_run24_36 &
+g.copy raster=ssp5_sprawl_fin_run24_37@EBCI,ssp5_sprawl_fin_run24_37 &
+g.copy raster=ssp5_sprawl_fin_run24_38@EBCI,ssp5_sprawl_fin_run24_38 &
+g.copy raster=ssp5_sprawl_fin_run24_39@EBCI,ssp5_sprawl_fin_run24_39 &
+g.copy raster=ssp5_sprawl_fin_run24_40@EBCI,ssp5_sprawl_fin_run24_40 &
+g.copy raster=ssp5_sprawl_fin_run24_41@EBCI,ssp5_sprawl_fin_run24_41 &
+g.copy raster=ssp5_sprawl_fin_run24_42@EBCI,ssp5_sprawl_fin_run24_42 &
+g.copy raster=ssp5_sprawl_fin_run24_43@EBCI,ssp5_sprawl_fin_run24_43 &
+g.copy raster=ssp5_sprawl_fin_run24_44@EBCI,ssp5_sprawl_fin_run24_44 &
+g.copy raster=ssp5_sprawl_fin_run24_45@EBCI,ssp5_sprawl_fin_run24_45 &
+g.copy raster=ssp5_sprawl_fin_run24_46@EBCI,ssp5_sprawl_fin_run24_46 &
+g.copy raster=ssp5_sprawl_fin_run24_47@EBCI,ssp5_sprawl_fin_run24_47 &
+g.copy raster=ssp5_sprawl_fin_run24_48@EBCI,ssp5_sprawl_fin_run24_48 &
+g.copy raster=ssp5_sprawl_fin_run24_49@EBCI,ssp5_sprawl_fin_run24_49 &
+g.copy raster=ssp5_sprawl_fin_run24_50@EBCI,ssp5_sprawl_fin_run24_50
+
+### export ssp5_sprawl_run24 for animation
+r.out.gdal input=ssp5_sprawl_fin_run24_01@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2025_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_02@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2026_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_03@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2027_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_04@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2028_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_05@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2029_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_06@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2030_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_07@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2031_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_08@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2032_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_09@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2033_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_10@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2034_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_11@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2035_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_12@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2036_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_13@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2037_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_14@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2038_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_15@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2039_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_16@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2040_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_17@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2041_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_18@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2042_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_19@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2043_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_20@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2044_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_21@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2045_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_22@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2046_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_23@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2047_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_24@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2048_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_25@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2049_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_26@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2050_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_27@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2051_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_28@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2052_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_29@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2053_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_30@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2054_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_31@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2055_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_32@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2056_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_33@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2057_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_34@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2058_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_35@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2059_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_36@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2060_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_37@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2061_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_38@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2062_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_39@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2063_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_40@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2064_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_41@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2065_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_42@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2066_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_43@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2067_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_44@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2068_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_45@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2069_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_46@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2070_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_47@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2071_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_48@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2072_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_49@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2073_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_50@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2074_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_51@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2075_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_52@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2076_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_53@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2077_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_54@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2078_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_55@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2079_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_56@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2080_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_57@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2081_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_58@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2082_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_59@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2083_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_60@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2084_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_61@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2085_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_62@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2086_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_63@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2087_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_64@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2088_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_65@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2089_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_66@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2090_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_67@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2091_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_68@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2092_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_69@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2093_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_70@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2094_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_71@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2095_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_72@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2096_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_73@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2097_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_74@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2098_buncombe.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run24_75@EBCI2 output=D:\FUTURES\futures_outputs\ssp5_sprawl_run24_2099_buncombe.tif format=GTiff
+
 
 ####### copy files from broken mapset to new mapset
 
