@@ -1016,8 +1016,11 @@ r.series input=ssp5_sprawl_run1_bin,ssp5_sprawl_run2_bin,ssp5_sprawl_run3_bin,ss
 # convert to percent probability
 r.mapcalc "ssp5_sprawl_dev_prob = (ssp5_sprawl_dev_count / 50.0) * 100.0"
 
-# reclassify to probability bins
+# reclassify to probability bins (moderate, high, highest)
 r.mapcalc "ssp5_sprawl_dev_prob_class = if(ssp5_sprawl_dev_prob < 2, 0, if(ssp5_sprawl_dev_prob < 25, 1, if(ssp5_sprawl_dev_prob <= 50, 2, 3)))"
+
+# reclassify to probability bins (lower, higher)
+r.mapcalc "ssp5_sprawl_dev_prob_class_lowhigh = if(ssp5_sprawl_dev_prob < 2, null(), if(ssp5_sprawl_dev_prob <= 20, 1, 2))"
 
 ### Reproject SSP5 sprawl outputs into the SECAS Blueprint GRASS location before exporting them into ArcGIS
 
@@ -1026,6 +1029,10 @@ r.mapcalc "ssp5_sprawl_dev_prob_class = if(ssp5_sprawl_dev_prob < 2, 0, if(ssp5_
 r.proj input=ssp5_sprawl_dev_prob_class location=SBRE_FUTURES mapset=EBCI2 output=ssp5_sprawl_dev_prob_class_reproj method=nearest resolution=30
 
 r.out.gdal input=ssp5_sprawl_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_class_reproj.tif format=GTiff
+
+r.proj input=ssp5_sprawl_dev_prob_class_lowhigh location=SBRE_FUTURES mapset=EBCI2 output=ssp5_sprawl_dev_prob_class_lowhigh_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_sprawl_dev_prob_class_lowhigh_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_class_lowhigh_reproj.tif format=GTiff
 
 #ssp5 sprawl dev prob
 
@@ -1100,21 +1107,21 @@ r.mapcalc "ssp1_sprawl_dev_prob_class_lowhigh = if(ssp1_sprawl_dev_prob < 2, nul
 
 ### Reproject SSP5 sprawl outputs into the SECAS Blueprint GRASS location before exporting them into ArcGIS (switch to new mapset, then run the commands)
 
-#ssp1 sprawl dev prob class
+#ssp1 sprawl dev prob class (switch from "sprawl" to "infill" here)
 
-r.proj input=ssp1_sprawl_dev_prob_class location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_sprawl_dev_prob_class_reproj method=nearest resolution=30
+r.proj input=ssp1_sprawl_dev_prob_class location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_dev_prob_class_reproj method=nearest resolution=30
 
-r.proj input=ssp1_sprawl_dev_prob_class_lowhigh location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_sprawl_dev_prob_class_lowhigh_reproj method=nearest resolution=30
+r.proj input=ssp1_sprawl_dev_prob_class_lowhigh location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_dev_prob_class_lowhigh_reproj method=nearest resolution=30
 
-r.out.gdal input=ssp1_sprawl_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp1_sprawl_dev_prob_class_reproj.tif format=GTiff
+r.out.gdal input=ssp1_infill_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_class_reproj.tif format=GTiff
 
-r.out.gdal input=ssp1_sprawl_dev_prob_class_reproj output=D:\FUTURES\futures_outputs\ssp1_sprawl_dev_prob_class_lowhigh_reproj.tif format=GTiff
+r.out.gdal input=ssp1_infill_dev_prob_class_lowhigh_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_class_lowhigh_reproj.tif format=GTiff
 
 #ssp1 sprawl dev prob
 
-r.proj input=ssp1_sprawl_dev_prob location=SBRE_FUTURES mapset=EBCI2 output=ssp1_sprawl_dev_prob_reproj method=nearest resolution=30
+r.proj input=ssp1_sprawl_dev_prob location=SBRE_FUTURES mapset=EBCI2 output=ssp1_infill_dev_prob_reproj method=nearest resolution=30
 
-r.out.gdal input=ssp1_sprawl_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp1_sprawl_dev_prob_reproj.tif format=GTiff
+r.out.gdal input=ssp1_infill_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_reproj.tif format=GTiff
 
 
 
