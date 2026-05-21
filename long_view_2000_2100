@@ -1124,6 +1124,66 @@ r.proj input=ssp1_sprawl_dev_prob location=SBRE_FUTURES mapset=EBCI2 output=ssp1
 r.out.gdal input=ssp1_infill_dev_prob_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_reproj.tif format=GTiff
 
 
+### project the 2050, 2075, 2100 time steps for a random run (let's do run 9)
+
+#ssp2
+
+r.proj input=ssp2_fin_run9_75 location=SBRE_FUTURES mapset=EBCI output=ssp2_fin_run9_75 method=nearest resolution=30
+
+r.proj input=ssp2_fin_run9_50 location=SBRE_FUTURES mapset=EBCI output=ssp2_fin_run9_50 method=nearest resolution=30
+
+r.proj input=ssp2_fin_run9_25 location=SBRE_FUTURES mapset=EBCI output=ssp2_fin_run9_25 method=nearest resolution=30
+
+#ssp5
+
+r.proj input=ssp5_fin_run9_75 location=SBRE_FUTURES mapset=EBCI output=ssp5_fin_run9_75 method=nearest resolution=30
+
+r.proj input=ssp5_fin_run9_50 location=SBRE_FUTURES mapset=EBCI output=ssp5_fin_run9_50 method=nearest resolution=30
+
+r.proj input=ssp5_fin_run9_25 location=SBRE_FUTURES mapset=EBCI output=ssp5_fin_run9_25 method=nearest resolution=30
+
+#ssp5 sprawl
+
+r.proj input=ssp5_sprawl_fin_run9_75 location=SBRE_FUTURES mapset=EBCI output=ssp5_sprawl_fin_run9_75 method=nearest resolution=30
+
+r.proj input=ssp5_sprawl_fin_run9_50 location=SBRE_FUTURES mapset=EBCI output=ssp5_sprawl_fin_run9_50 method=nearest resolution=30
+
+r.proj input=ssp5_sprawl_fin_run9_25 location=SBRE_FUTURES mapset=EBCI output=ssp5_sprawl_fin_run9_25 method=nearest resolution=30
+
+#ssp1
+
+r.proj input=ssp1_fin_run9_75 location=SBRE_FUTURES mapset=EBCI2 output=ssp1_fin_run9_75 method=nearest resolution=30
+
+r.proj input=ssp1_fin_run9_50 location=SBRE_FUTURES mapset=EBCI2 output=ssp1_fin_run9_50 method=nearest resolution=30
+
+r.proj input=ssp1_fin_run9_25 location=SBRE_FUTURES mapset=EBCI2 output=ssp1_fin_run9_25 method=nearest resolution=30
+
+
+#ssp1 infill
+
+r.proj input=ssp1_sprawl_fin_run9_75 location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_fin_run9_75 method=nearest resolution=30
+
+r.proj input=ssp1_sprawl_fin_run9_50 location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_fin_run9_50 method=nearest resolution=30
+
+r.proj input=ssp1_sprawl_fin_run9_25 location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_fin_run9_25 method=nearest resolution=30
+
+#export
+
+r.out.gdal input=ssp2_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp2_fin_run9_75_jackson.tif format=GTiff &
+r.out.gdal input=ssp2_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp2_fin_run9_50_jackson.tif format=GTiff &
+r.out.gdal input=ssp2_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp2_fin_run9_25_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp5_fin_run9_75_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp5_fin_run9_50_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp5_fin_run9_25_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp5_sprawl_fin_run9_75_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp5_sprawl_fin_run9_50_jackson.tif format=GTiff &
+r.out.gdal input=ssp5_sprawl_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp5_sprawl_fin_run9_25_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp1_fin_run9_75_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp1_fin_run9_50_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp1_fin_run9_25_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_infill_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp1_infill_fin_run9_75_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_infill_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp1_infill_fin_run9_50_jackson.tif format=GTiff &
+r.out.gdal input=ssp1_infill_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp1_infill_fin_run9_25_jackson.tif format=GTiff
 
 ####### copy hindcast files from broken mapset to new mapset
 g.copy raster=hindcast_2015_2024_run1@EBCI,hindcast_2015_2024_run1 &
