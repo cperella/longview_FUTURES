@@ -350,35 +350,67 @@ r.mapcalc "urban_2000_clip = if(counties_final, urban_2000)"
 # save a region used as a grid
 g.region res=5000 -a save=grid
 
-# run the validation modules!
-### starting with run 1
-# tabular
-r.futures.validation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip
-# grid
-r.futures.gridvalidation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip region=grid
-r.futures.gridvalidation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip allocation_disagreement=allocation_15_24_run1 quantity_disagreement=quantity_15_24_run1 region=grid
-### look into the Figure of Merit stuff...
+#### Section below manually reclasses each run, instead using code from Anna that uses Python shell to 
 
-### run 4
-# tabular
-r.reclass input=final_2006_2024_run4 output=final_2006_2024_run4_reclass rules=rules.txt
-r.futures.validation simulated=final_2006_2024_run4_reclass reference=urban_2024_clip original=urban_2005_clip
+      # run the validation modules!
+      ### starting with run 1
+      # tabular
+      #r.futures.validation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip
+      # grid
+      #r.futures.gridvalidation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip output=run1_grid_val region=grid
+      #r.futures.gridvalidation simulated=hindcast_2015_2024_run1_reclass reference=urban_2024_clip original=urban_2000_clip allocation_disagreement=allocation_15_24_run1 quantity_disagreement=quantity_15_24_run1 region=grid
+      ### look into the Figure of Merit stuff...
+      
+      ### run 4
+      # tabular
+      #r.reclass input=final_2006_2024_run4 output=final_2006_2024_run4_reclass rules=rules.txt
+      #r.futures.validation simulated=final_2006_2024_run4_reclass reference=urban_2024_clip original=urban_2005_clip
+      
+      ### run 3
+      # tabular
+      #r.reclass input=final_2006_2024_run3 output=final_2006_2024_run3_reclass rules=rules.txt
+      #r.futures.validation simulated=final_2006_2024_run3_reclass reference=urban_2024_clip original=urban_2005_clip
+      
+      ### run 2
+      # tabular
+      #r.reclass input=final_2006_2024_run2 output=final_2006_2024_run2_reclass rules=rules.txt
+      #r.futures.validation simulated=final_2006_2024_run2_reclass reference=urban_2024_clip original=urban_2005_clip
+      
+      ### run 1
+      # tabular
+      #r.reclass input=final_2006_2024_run1 output=final_2006_2024_run1_reclass rules=rules.txt
+      #r.futures.validation simulated=final_2006_2024_run1_reclass reference=urban_2024_clip original=urban_2005_clip
 
-### run 3
-# tabular
-r.reclass input=final_2006_2024_run3 output=final_2006_2024_run3_reclass rules=rules.txt
-r.futures.validation simulated=final_2006_2024_run3_reclass reference=urban_2024_clip original=urban_2005_clip
 
-### run 2
-# tabular
-r.reclass input=final_2006_2024_run2 output=final_2006_2024_run2_reclass rules=rules.txt
-r.futures.validation simulated=final_2006_2024_run2_reclass reference=urban_2024_clip original=urban_2005_clip
+### to run a for loop to average all of the runs:
 
-### run 1
-# tabular
-r.reclass input=final_2006_2024_run1 output=final_2006_2024_run1_reclass rules=rules.txt
-r.futures.validation simulated=final_2006_2024_run1_reclass reference=urban_2024_clip original=urban_2005_clip
+# using the python shell in grass:
 
+import json
+metrics = []
+n=50 #number of runs
+for i in range(1, n + 1):
+    gs.run_command('r.reclass', input=f'hindcast_2015_2024_run{i}', output=f'hindcast_2015_2024_run{i}_reclass', rules='rules.txt', overwrite=True)
+    metrics.append(json.loads(gs.read_command('r.futures.validation', simulated=f'hindcast_2015_2024_run{i}_reclass', reference='urban_2024', original='urban_2000', format='json')))
+
+# Scale metrics and compute derived fields
+for m in metrics:
+    m["hits"] *= 100
+    m["misses"] *= 100
+    m["false_alarms"] *= 100
+    m["figure_of_merit"] *= 100
+    m["null_successes"] *= 100
+    m["initially_developed"] *= 100
+    m["quantity_error"] = m["misses"] - m["false_alarms"]
+    m["total_error"] = m["misses"] + m["false_alarms"]
+    m["allocation_error"] = m["total_error"] - m["quantity_error"]
+
+# Print as a table
+
+
+print("\t".join(fields))
+for m in metrics:
+    print("\t".join(f"{m[f]:.4f}" for f in fields))
 
 ############## Trying to figure out some results analysis since validation isn't working ##############
 
