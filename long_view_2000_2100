@@ -406,11 +406,29 @@ for m in metrics:
     m["allocation_error"] = m["total_error"] - m["quantity_error"]
 
 # Print as a table
-
-
+fields = ["hits", "misses", "false_alarms", "figure_of_merit", "null_successes", 
+          "initially_developed", "quantity_error", "total_error", "allocation_error"]
 print("\t".join(fields))
 for m in metrics:
     print("\t".join(f"{m[f]:.4f}" for f in fields))
+
+# Export to csv, then made plots in R
+import csv
+with open(r'D:\FUTURES\futures_outputs\hindcast_metrics.csv', 'w', newline='') as f:
+    writer = csv.DictWriter(f, fieldnames=fields, extrasaction='ignore')
+    writer.writeheader()
+    writer.writerows(metrics)
+
+### grid validation
+
+r.futures.gridvalidation simulated=hindcast_2015_2024_run3_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run3_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run4_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run4_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run5_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run5_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run6_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run6_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run7_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run7_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run8_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run8_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run9_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run9_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run10_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run10_grid region=grid nprocs=4
 
 ############## Trying to figure out some results analysis since validation isn't working ##############
 
