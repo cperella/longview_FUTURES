@@ -430,6 +430,39 @@ r.futures.gridvalidation simulated=hindcast_2015_2024_run8_reclass reference=urb
 r.futures.gridvalidation simulated=hindcast_2015_2024_run9_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run9_grid region=grid nprocs=4 &
 r.futures.gridvalidation simulated=hindcast_2015_2024_run10_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run10_grid region=grid nprocs=4
 
+r.futures.gridvalidation simulated=hindcast_2015_2024_run11_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run11_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run12_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run12_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run13_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run13_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run14_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run14_grid region=grid nprocs=4 &
+
+
+r.futures.gridvalidation simulated=hindcast_2015_2024_run15_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run15_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run16_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run16_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run17_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run17_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run18_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run18_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run19_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run19_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run20_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run20_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run21_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run21_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run22_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run22_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run23_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run23_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run24_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run24_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run25_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run25_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run26_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run26_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run27_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run27_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run28_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run28_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run29_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run29_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run30_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run30_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run31_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run31_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run32_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run32_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run33_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run33_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run34_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run34_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run35_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run35_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run36_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run36_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run37_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run37_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run38_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run38_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run39_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run39_grid region=grid nprocs=4 &
+r.futures.gridvalidation simulated=hindcast_2015_2024_run40_reclass reference=urban_2024_clip original=urban_2000_clip output=validation_disc_run40_grid region=grid nprocs=4
+
 ############## Trying to figure out some results analysis since validation isn't working ##############
 
 # turn all runs into binary rasters where 1=newly developed, 0=not newly developed)
