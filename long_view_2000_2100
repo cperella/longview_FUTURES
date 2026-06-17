@@ -1304,6 +1304,11 @@ r.out.gdal input=ssp1_infill_fin_run9_75 output=D:\FUTURES\futures_outputs\ssp1_
 r.out.gdal input=ssp1_infill_fin_run9_50 output=D:\FUTURES\futures_outputs\ssp1_infill_fin_run9_50_jackson.tif format=GTiff &
 r.out.gdal input=ssp1_infill_fin_run9_25 output=D:\FUTURES\futures_outputs\ssp1_infill_fin_run9_25_jackson.tif format=GTiff
 
+
+### agreement between all scenarios for high likelihood of development
+
+r.mapcalc "ssp_agreement_high = if(ssp5_sprawl_dev_prob_class_lowhigh_reproj@PERMANENT == 2 && ssp2_dev_prob_class_lowhigh_reproj@PERMANENT == 2 && ssp1_infill_dev_prob_class_lowhigh_reproj@PERMANENT == 2,2,null())"
+
 ####### copy hindcast files from broken mapset to new mapset
 g.copy raster=hindcast_2015_2024_run1@EBCI,hindcast_2015_2024_run1 &
 g.copy raster=hindcast_2015_2024_run10@EBCI,hindcast_2015_2024_run10 &
