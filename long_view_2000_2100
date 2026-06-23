@@ -1812,3 +1812,7 @@ g.copy raster=hindcast_2015_2024_run9_7@EBCI,hindcast_2015_2024_run9_7 &
 g.copy raster=hindcast_2015_2024_run9_8@EBCI,hindcast_2015_2024_run9_8 &
 g.copy raster=hindcast_2015_2024_run9_9@EBCI,hindcast_2015_2024_run9_9
 
+
+### for 2050 and 2075 results
+r.mapcalc 'ssp1_sprawl_fin_run1_25_newdev = ssp1_sprawl_fin_run1_25 - urban_2024'
+
