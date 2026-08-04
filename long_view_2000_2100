@@ -1926,3 +1926,263 @@ r.mapcalc "ssp1_sprawl_fin_run50_50_new = if(isnull(initial_dev), ssp1_sprawl_fi
 r.series input=ssp1_sprawl_fin_run1_50_new,ssp1_sprawl_fin_run2_50_new,ssp1_sprawl_fin_run3_50_new,ssp1_sprawl_fin_run4_50_new,ssp1_sprawl_fin_run5_50_new,ssp1_sprawl_fin_run6_50_new,ssp1_sprawl_fin_run7_50_new,ssp1_sprawl_fin_run8_50_new,ssp1_sprawl_fin_run9_50_new,ssp1_sprawl_fin_run10_50_new,ssp1_sprawl_fin_run11_50_new,ssp1_sprawl_fin_run12_50_new,ssp1_sprawl_fin_run13_50_new,ssp1_sprawl_fin_run14_50_new,ssp1_sprawl_fin_run15_50_new,ssp1_sprawl_fin_run16_50_new,ssp1_sprawl_fin_run17_50_new,ssp1_sprawl_fin_run18_50_new,ssp1_sprawl_fin_run19_50_new,ssp1_sprawl_fin_run20_50_new,ssp1_sprawl_fin_run21_50_new,ssp1_sprawl_fin_run22_50_new,ssp1_sprawl_fin_run23_50_new,ssp1_sprawl_fin_run24_50_new,ssp1_sprawl_fin_run25_50_new,ssp1_sprawl_fin_run26_50_new,ssp1_sprawl_fin_run27_50_new,ssp1_sprawl_fin_run28_50_new,ssp1_sprawl_fin_run29_50_new,ssp1_sprawl_fin_run30_50_new,ssp1_sprawl_fin_run31_50_new,ssp1_sprawl_fin_run32_50_new,ssp1_sprawl_fin_run33_50_new,ssp1_sprawl_fin_run34_50_new,ssp1_sprawl_fin_run35_50_new,ssp1_sprawl_fin_run36_50_new,ssp1_sprawl_fin_run37_50_new,ssp1_sprawl_fin_run38_50_new,ssp1_sprawl_fin_run39_50_new,ssp1_sprawl_fin_run40_50_new,ssp1_sprawl_fin_run41_50_new,ssp1_sprawl_fin_run42_50_new,ssp1_sprawl_fin_run43_50_new,ssp1_sprawl_fin_run44_50_new,ssp1_sprawl_fin_run45_50_new,ssp1_sprawl_fin_run46_50_new,ssp1_sprawl_fin_run47_50_new,ssp1_sprawl_fin_run48_50_new,ssp1_sprawl_fin_run49_50_new,ssp1_sprawl_fin_run50_50_new output=ssp1_sprawl_fin_dev_count_2075 method=sum
 
 r.mapcalc "ssp1_dev_prob_2075 = (ssp1_sprawl_fin_dev_count_2075 / 50.0) * 100.0"
+
+# project to SECAS location and export
+
+r.proj input=ssp1_sprawl_dev_prob_2050 location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_dev_prob_2050_reproj method=nearest resolution=30
+
+r.proj input=ssp1_dev_prob_2075 location=SBRE_FUTURES mapset=annual_NLCD output=ssp1_infill_dev_prob_2075_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp1_infill_dev_prob_2050_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_2050_reproj.tif format=GTiff
+
+r.out.gdal input=ssp1_infill_dev_prob_2075_reproj output=D:\FUTURES\futures_outputs\ssp1_infill_dev_prob_2075_reproj.tif format=GTiff
+
+### ssp5 sprawl
+### 2050 and 2075 results
+r.mapcalc “initial_dev = if(ssp5_sprawl_fin_run1 == 0, 1, null())”
+#2050
+r.mapcalc "ssp5_sprawl_fin_run1_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run1_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run2_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run2_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run3_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run3_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run4_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run4_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run5_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run5_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run6_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run6_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run7_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run7_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run8_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run8_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run9_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run9_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run10_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run10_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run11_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run11_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run12_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run12_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run13_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run13_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run14_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run14_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run15_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run15_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run16_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run16_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run17_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run17_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run18_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run18_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run19_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run19_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run20_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run20_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run21_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run21_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run22_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run22_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run23_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run23_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run24_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run24_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run25_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run25_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run26_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run26_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run27_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run27_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run28_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run28_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run29_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run29_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run30_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run30_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run31_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run31_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run32_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run32_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run33_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run33_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run34_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run34_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run35_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run35_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run36_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run36_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run37_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run37_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run38_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run38_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run39_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run39_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run40_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run40_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run41_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run41_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run42_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run42_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run43_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run43_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run44_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run44_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run45_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run45_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run46_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run46_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run47_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run47_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run48_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run48_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run49_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run49_25, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run50_25_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run50_25, null())" --o
+
+r.series input=ssp5_sprawl_fin_run1_25_new,ssp5_sprawl_fin_run2_25_new,ssp5_sprawl_fin_run3_25_new,ssp5_sprawl_fin_run4_25_new,ssp5_sprawl_fin_run5_25_new,ssp5_sprawl_fin_run6_25_new,ssp5_sprawl_fin_run7_25_new,ssp5_sprawl_fin_run8_25_new,ssp5_sprawl_fin_run9_25_new,ssp5_sprawl_fin_run10_25_new,ssp5_sprawl_fin_run11_25_new,ssp5_sprawl_fin_run12_25_new,ssp5_sprawl_fin_run13_25_new,ssp5_sprawl_fin_run14_25_new,ssp5_sprawl_fin_run15_25_new,ssp5_sprawl_fin_run16_25_new,ssp5_sprawl_fin_run17_25_new,ssp5_sprawl_fin_run18_25_new,ssp5_sprawl_fin_run19_25_new,ssp5_sprawl_fin_run20_25_new,ssp5_sprawl_fin_run21_25_new,ssp5_sprawl_fin_run22_25_new,ssp5_sprawl_fin_run23_25_new,ssp5_sprawl_fin_run24_25_new,ssp5_sprawl_fin_run25_25_new,ssp5_sprawl_fin_run26_25_new,ssp5_sprawl_fin_run27_25_new,ssp5_sprawl_fin_run28_25_new,ssp5_sprawl_fin_run29_25_new,ssp5_sprawl_fin_run30_25_new,ssp5_sprawl_fin_run31_25_new,ssp5_sprawl_fin_run32_25_new,ssp5_sprawl_fin_run33_25_new,ssp5_sprawl_fin_run34_25_new,ssp5_sprawl_fin_run35_25_new,ssp5_sprawl_fin_run36_25_new,ssp5_sprawl_fin_run37_25_new,ssp5_sprawl_fin_run38_25_new,ssp5_sprawl_fin_run39_25_new,ssp5_sprawl_fin_run40_25_new,ssp5_sprawl_fin_run41_25_new,ssp5_sprawl_fin_run42_25_new,ssp5_sprawl_fin_run43_25_new,ssp5_sprawl_fin_run44_25_new,ssp5_sprawl_fin_run45_25_new,ssp5_sprawl_fin_run46_25_new,ssp5_sprawl_fin_run47_25_new,ssp5_sprawl_fin_run48_25_new,ssp5_sprawl_fin_run49_25_new,ssp5_sprawl_fin_run50_25_new output=ssp5_sprawl_fin_dev_count_2050 method=sum
+
+r.mapcalc "ssp5_sprawl_dev_prob_2050 = (ssp5_sprawl_fin_dev_count_2050 / 50.0) * 100.0"
+
+#2075
+r.mapcalc "ssp5_sprawl_fin_run1_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run1_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run2_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run2_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run3_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run3_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run4_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run4_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run5_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run5_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run6_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run6_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run7_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run7_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run8_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run8_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run9_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run9_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run10_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run10_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run11_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run11_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run12_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run12_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run13_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run13_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run14_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run14_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run15_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run15_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run16_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run16_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run17_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run17_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run18_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run18_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run19_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run19_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run20_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run20_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run21_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run21_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run22_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run22_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run23_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run23_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run24_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run24_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run25_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run25_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run26_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run26_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run27_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run27_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run28_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run28_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run29_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run29_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run30_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run30_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run31_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run31_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run32_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run32_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run33_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run33_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run34_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run34_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run35_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run35_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run36_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run36_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run37_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run37_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run38_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run38_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run39_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run39_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run40_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run40_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run41_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run41_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run42_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run42_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run43_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run43_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run44_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run44_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run45_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run45_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run46_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run46_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run47_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run47_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run48_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run48_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run49_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run49_50, null())" --o &
+r.mapcalc "ssp5_sprawl_fin_run50_50_new = if(isnull(initial_dev_ssp5), ssp5_sprawl_fin_run50_50, null())" --o
+
+r.series input=ssp5_sprawl_fin_run1_50_new,ssp5_sprawl_fin_run2_50_new,ssp5_sprawl_fin_run3_50_new,ssp5_sprawl_fin_run4_50_new,ssp5_sprawl_fin_run5_50_new,ssp5_sprawl_fin_run6_50_new,ssp5_sprawl_fin_run7_50_new,ssp5_sprawl_fin_run8_50_new,ssp5_sprawl_fin_run9_50_new,ssp5_sprawl_fin_run10_50_new,ssp5_sprawl_fin_run11_50_new,ssp5_sprawl_fin_run12_50_new,ssp5_sprawl_fin_run13_50_new,ssp5_sprawl_fin_run14_50_new,ssp5_sprawl_fin_run15_50_new,ssp5_sprawl_fin_run16_50_new,ssp5_sprawl_fin_run17_50_new,ssp5_sprawl_fin_run18_50_new,ssp5_sprawl_fin_run19_50_new,ssp5_sprawl_fin_run20_50_new,ssp5_sprawl_fin_run21_50_new,ssp5_sprawl_fin_run22_50_new,ssp5_sprawl_fin_run23_50_new,ssp5_sprawl_fin_run24_50_new,ssp5_sprawl_fin_run25_50_new,ssp5_sprawl_fin_run26_50_new,ssp5_sprawl_fin_run27_50_new,ssp5_sprawl_fin_run28_50_new,ssp5_sprawl_fin_run29_50_new,ssp5_sprawl_fin_run30_50_new,ssp5_sprawl_fin_run31_50_new,ssp5_sprawl_fin_run32_50_new,ssp5_sprawl_fin_run33_50_new,ssp5_sprawl_fin_run34_50_new,ssp5_sprawl_fin_run35_50_new,ssp5_sprawl_fin_run36_50_new,ssp5_sprawl_fin_run37_50_new,ssp5_sprawl_fin_run38_50_new,ssp5_sprawl_fin_run39_50_new,ssp5_sprawl_fin_run40_50_new,ssp5_sprawl_fin_run41_50_new,ssp5_sprawl_fin_run42_50_new,ssp5_sprawl_fin_run43_50_new,ssp5_sprawl_fin_run44_50_new,ssp5_sprawl_fin_run45_50_new,ssp5_sprawl_fin_run46_50_new,ssp5_sprawl_fin_run47_50_new,ssp5_sprawl_fin_run48_50_new,ssp5_sprawl_fin_run49_50_new,ssp5_sprawl_fin_run50_50_new output=ssp5_sprawl_fin_dev_count_2075 method=sum
+
+r.mapcalc "ssp5_sprawl_dev_prob_2075 = (ssp5_sprawl_fin_dev_count_2075 / 50.0) * 100.0"
+
+# project to SECAS location and export
+
+r.proj input=ssp5_sprawl_dev_prob_2050 location=SBRE_FUTURES mapset=annual_NLCD output=ssp5_sprawl_dev_prob_2050_reproj method=nearest resolution=30
+
+r.proj input=ssp5_sprawl_dev_prob_2075 location=SBRE_FUTURES mapset=annual_NLCD output=ssp5_sprawl_dev_prob_2075_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp5_sprawl_dev_prob_2050_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_2050_reproj.tif format=GTiff
+
+r.out.gdal input=ssp5_sprawl_dev_prob_2075_reproj output=D:\FUTURES\futures_outputs\ssp5_sprawl_dev_prob_2075_reproj.tif format=GTiff
+
+### ssp2
+### 2050 and 2075 results
+r.mapcalc "initial_dev = if(ssp2_fin_run1 == 0, 1, null())"
+#2050
+r.mapcalc "ssp2_fin_run1_25_new = if(isnull(initial_dev), ssp2_fin_run1_25, null())" --o &
+r.mapcalc "ssp2_fin_run2_25_new = if(isnull(initial_dev), ssp2_fin_run2_25, null())" --o &
+r.mapcalc "ssp2_fin_run3_25_new = if(isnull(initial_dev), ssp2_fin_run3_25, null())" --o &
+r.mapcalc "ssp2_fin_run4_25_new = if(isnull(initial_dev), ssp2_fin_run4_25, null())" --o &
+r.mapcalc "ssp2_fin_run5_25_new = if(isnull(initial_dev), ssp2_fin_run5_25, null())" --o &
+r.mapcalc "ssp2_fin_run6_25_new = if(isnull(initial_dev), ssp2_fin_run6_25, null())" --o &
+r.mapcalc "ssp2_fin_run7_25_new = if(isnull(initial_dev), ssp2_fin_run7_25, null())" --o &
+r.mapcalc "ssp2_fin_run8_25_new = if(isnull(initial_dev), ssp2_fin_run8_25, null())" --o &
+r.mapcalc "ssp2_fin_run9_25_new = if(isnull(initial_dev), ssp2_fin_run9_25, null())" --o &
+r.mapcalc "ssp2_fin_run10_25_new = if(isnull(initial_dev), ssp2_fin_run10_25, null())" --o &
+r.mapcalc "ssp2_fin_run11_25_new = if(isnull(initial_dev), ssp2_fin_run11_25, null())" --o &
+r.mapcalc "ssp2_fin_run12_25_new = if(isnull(initial_dev), ssp2_fin_run12_25, null())" --o &
+r.mapcalc "ssp2_fin_run13_25_new = if(isnull(initial_dev), ssp2_fin_run13_25, null())" --o &
+r.mapcalc "ssp2_fin_run14_25_new = if(isnull(initial_dev), ssp2_fin_run14_25, null())" --o &
+r.mapcalc "ssp2_fin_run15_25_new = if(isnull(initial_dev), ssp2_fin_run15_25, null())" --o &
+r.mapcalc "ssp2_fin_run16_25_new = if(isnull(initial_dev), ssp2_fin_run16_25, null())" --o &
+r.mapcalc "ssp2_fin_run17_25_new = if(isnull(initial_dev), ssp2_fin_run17_25, null())" --o &
+r.mapcalc "ssp2_fin_run18_25_new = if(isnull(initial_dev), ssp2_fin_run18_25, null())" --o &
+r.mapcalc "ssp2_fin_run19_25_new = if(isnull(initial_dev), ssp2_fin_run19_25, null())" --o &
+r.mapcalc "ssp2_fin_run20_25_new = if(isnull(initial_dev), ssp2_fin_run20_25, null())" --o &
+r.mapcalc "ssp2_fin_run21_25_new = if(isnull(initial_dev), ssp2_fin_run21_25, null())" --o &
+r.mapcalc "ssp2_fin_run22_25_new = if(isnull(initial_dev), ssp2_fin_run22_25, null())" --o &
+r.mapcalc "ssp2_fin_run23_25_new = if(isnull(initial_dev), ssp2_fin_run23_25, null())" --o &
+r.mapcalc "ssp2_fin_run24_25_new = if(isnull(initial_dev), ssp2_fin_run24_25, null())" --o &
+r.mapcalc "ssp2_fin_run25_25_new = if(isnull(initial_dev), ssp2_fin_run25_25, null())" --o &
+r.mapcalc "ssp2_fin_run26_25_new = if(isnull(initial_dev), ssp2_fin_run26_25, null())" --o &
+r.mapcalc "ssp2_fin_run27_25_new = if(isnull(initial_dev), ssp2_fin_run27_25, null())" --o &
+r.mapcalc "ssp2_fin_run28_25_new = if(isnull(initial_dev), ssp2_fin_run28_25, null())" --o &
+r.mapcalc "ssp2_fin_run29_25_new = if(isnull(initial_dev), ssp2_fin_run29_25, null())" --o &
+r.mapcalc "ssp2_fin_run30_25_new = if(isnull(initial_dev), ssp2_fin_run30_25, null())" --o &
+r.mapcalc "ssp2_fin_run31_25_new = if(isnull(initial_dev), ssp2_fin_run31_25, null())" --o &
+r.mapcalc "ssp2_fin_run32_25_new = if(isnull(initial_dev), ssp2_fin_run32_25, null())" --o &
+r.mapcalc "ssp2_fin_run33_25_new = if(isnull(initial_dev), ssp2_fin_run33_25, null())" --o &
+r.mapcalc "ssp2_fin_run34_25_new = if(isnull(initial_dev), ssp2_fin_run34_25, null())" --o &
+r.mapcalc "ssp2_fin_run35_25_new = if(isnull(initial_dev), ssp2_fin_run35_25, null())" --o &
+r.mapcalc "ssp2_fin_run36_25_new = if(isnull(initial_dev), ssp2_fin_run36_25, null())" --o &
+r.mapcalc "ssp2_fin_run37_25_new = if(isnull(initial_dev), ssp2_fin_run37_25, null())" --o &
+r.mapcalc "ssp2_fin_run38_25_new = if(isnull(initial_dev), ssp2_fin_run38_25, null())" --o &
+r.mapcalc "ssp2_fin_run39_25_new = if(isnull(initial_dev), ssp2_fin_run39_25, null())" --o &
+r.mapcalc "ssp2_fin_run40_25_new = if(isnull(initial_dev), ssp2_fin_run40_25, null())" --o &
+r.mapcalc "ssp2_fin_run41_25_new = if(isnull(initial_dev), ssp2_fin_run41_25, null())" --o &
+r.mapcalc "ssp2_fin_run42_25_new = if(isnull(initial_dev), ssp2_fin_run42_25, null())" --o &
+r.mapcalc "ssp2_fin_run43_25_new = if(isnull(initial_dev), ssp2_fin_run43_25, null())" --o &
+r.mapcalc "ssp2_fin_run44_25_new = if(isnull(initial_dev), ssp2_fin_run44_25, null())" --o &
+r.mapcalc "ssp2_fin_run45_25_new = if(isnull(initial_dev), ssp2_fin_run45_25, null())" --o &
+r.mapcalc "ssp2_fin_run46_25_new = if(isnull(initial_dev), ssp2_fin_run46_25, null())" --o &
+r.mapcalc "ssp2_fin_run47_25_new = if(isnull(initial_dev), ssp2_fin_run47_25, null())" --o &
+r.mapcalc "ssp2_fin_run48_25_new = if(isnull(initial_dev), ssp2_fin_run48_25, null())" --o &
+r.mapcalc "ssp2_fin_run49_25_new = if(isnull(initial_dev), ssp2_fin_run49_25, null())" --o &
+r.mapcalc "ssp2_fin_run50_25_new = if(isnull(initial_dev), ssp2_fin_run50_25, null())" --o
+
+r.series input=ssp2_fin_run1_25_new,ssp2_fin_run2_25_new,ssp2_fin_run3_25_new,ssp2_fin_run4_25_new,ssp2_fin_run5_25_new,ssp2_fin_run6_25_new,ssp2_fin_run7_25_new,ssp2_fin_run8_25_new,ssp2_fin_run9_25_new,ssp2_fin_run10_25_new,ssp2_fin_run11_25_new,ssp2_fin_run12_25_new,ssp2_fin_run13_25_new,ssp2_fin_run14_25_new,ssp2_fin_run15_25_new,ssp2_fin_run16_25_new,ssp2_fin_run17_25_new,ssp2_fin_run18_25_new,ssp2_fin_run19_25_new,ssp2_fin_run20_25_new,ssp2_fin_run21_25_new,ssp2_fin_run22_25_new,ssp2_fin_run23_25_new,ssp2_fin_run24_25_new,ssp2_fin_run25_25_new,ssp2_fin_run26_25_new,ssp2_fin_run27_25_new,ssp2_fin_run28_25_new,ssp2_fin_run29_25_new,ssp2_fin_run30_25_new,ssp2_fin_run31_25_new,ssp2_fin_run32_25_new,ssp2_fin_run33_25_new,ssp2_fin_run34_25_new,ssp2_fin_run35_25_new,ssp2_fin_run36_25_new,ssp2_fin_run37_25_new,ssp2_fin_run38_25_new,ssp2_fin_run39_25_new,ssp2_fin_run40_25_new,ssp2_fin_run41_25_new,ssp2_fin_run42_25_new,ssp2_fin_run43_25_new,ssp2_fin_run44_25_new,ssp2_fin_run45_25_new,ssp2_fin_run46_25_new,ssp2_fin_run47_25_new,ssp2_fin_run48_25_new,ssp2_fin_run49_25_new,ssp2_fin_run50_25_new output=ssp2_fin_dev_count_2050 method=sum
+
+r.mapcalc "ssp2_dev_prob_2050 = (ssp2_fin_dev_count_2050 / 50.0) * 100.0"
+
+#2075
+r.mapcalc "ssp2_fin_run1_50_new = if(isnull(initial_dev), ssp2_fin_run1_50, null())" --o &
+r.mapcalc "ssp2_fin_run2_50_new = if(isnull(initial_dev), ssp2_fin_run2_50, null())" --o &
+r.mapcalc "ssp2_fin_run3_50_new = if(isnull(initial_dev), ssp2_fin_run3_50, null())" --o &
+r.mapcalc "ssp2_fin_run4_50_new = if(isnull(initial_dev), ssp2_fin_run4_50, null())" --o &
+r.mapcalc "ssp2_fin_run5_50_new = if(isnull(initial_dev), ssp2_fin_run5_50, null())" --o &
+r.mapcalc "ssp2_fin_run6_50_new = if(isnull(initial_dev), ssp2_fin_run6_50, null())" --o &
+r.mapcalc "ssp2_fin_run7_50_new = if(isnull(initial_dev), ssp2_fin_run7_50, null())" --o &
+r.mapcalc "ssp2_fin_run8_50_new = if(isnull(initial_dev), ssp2_fin_run8_50, null())" --o &
+r.mapcalc "ssp2_fin_run9_50_new = if(isnull(initial_dev), ssp2_fin_run9_50, null())" --o &
+r.mapcalc "ssp2_fin_run10_50_new = if(isnull(initial_dev), ssp2_fin_run10_50, null())" --o &
+r.mapcalc "ssp2_fin_run11_50_new = if(isnull(initial_dev), ssp2_fin_run11_50, null())" --o &
+r.mapcalc "ssp2_fin_run12_50_new = if(isnull(initial_dev), ssp2_fin_run12_50, null())" --o &
+r.mapcalc "ssp2_fin_run13_50_new = if(isnull(initial_dev), ssp2_fin_run13_50, null())" --o &
+r.mapcalc "ssp2_fin_run14_50_new = if(isnull(initial_dev), ssp2_fin_run14_50, null())" --o &
+r.mapcalc "ssp2_fin_run15_50_new = if(isnull(initial_dev), ssp2_fin_run15_50, null())" --o &
+r.mapcalc "ssp2_fin_run16_50_new = if(isnull(initial_dev), ssp2_fin_run16_50, null())" --o &
+r.mapcalc "ssp2_fin_run17_50_new = if(isnull(initial_dev), ssp2_fin_run17_50, null())" --o &
+r.mapcalc "ssp2_fin_run18_50_new = if(isnull(initial_dev), ssp2_fin_run18_50, null())" --o &
+r.mapcalc "ssp2_fin_run19_50_new = if(isnull(initial_dev), ssp2_fin_run19_50, null())" --o &
+r.mapcalc "ssp2_fin_run20_50_new = if(isnull(initial_dev), ssp2_fin_run20_50, null())" --o &
+r.mapcalc "ssp2_fin_run21_50_new = if(isnull(initial_dev), ssp2_fin_run21_50, null())" --o &
+r.mapcalc "ssp2_fin_run22_50_new = if(isnull(initial_dev), ssp2_fin_run22_50, null())" --o &
+r.mapcalc "ssp2_fin_run23_50_new = if(isnull(initial_dev), ssp2_fin_run23_50, null())" --o &
+r.mapcalc "ssp2_fin_run24_50_new = if(isnull(initial_dev), ssp2_fin_run24_50, null())" --o &
+r.mapcalc "ssp2_fin_run25_50_new = if(isnull(initial_dev), ssp2_fin_run25_50, null())" --o &
+r.mapcalc "ssp2_fin_run26_50_new = if(isnull(initial_dev), ssp2_fin_run26_50, null())" --o &
+r.mapcalc "ssp2_fin_run27_50_new = if(isnull(initial_dev), ssp2_fin_run27_50, null())" --o &
+r.mapcalc "ssp2_fin_run28_50_new = if(isnull(initial_dev), ssp2_fin_run28_50, null())" --o &
+r.mapcalc "ssp2_fin_run29_50_new = if(isnull(initial_dev), ssp2_fin_run29_50, null())" --o &
+r.mapcalc "ssp2_fin_run30_50_new = if(isnull(initial_dev), ssp2_fin_run30_50, null())" --o &
+r.mapcalc "ssp2_fin_run31_50_new = if(isnull(initial_dev), ssp2_fin_run31_50, null())" --o &
+r.mapcalc "ssp2_fin_run32_50_new = if(isnull(initial_dev), ssp2_fin_run32_50, null())" --o &
+r.mapcalc "ssp2_fin_run33_50_new = if(isnull(initial_dev), ssp2_fin_run33_50, null())" --o &
+r.mapcalc "ssp2_fin_run34_50_new = if(isnull(initial_dev), ssp2_fin_run34_50, null())" --o &
+r.mapcalc "ssp2_fin_run35_50_new = if(isnull(initial_dev), ssp2_fin_run35_50, null())" --o &
+r.mapcalc "ssp2_fin_run36_50_new = if(isnull(initial_dev), ssp2_fin_run36_50, null())" --o &
+r.mapcalc "ssp2_fin_run37_50_new = if(isnull(initial_dev), ssp2_fin_run37_50, null())" --o &
+r.mapcalc "ssp2_fin_run38_50_new = if(isnull(initial_dev), ssp2_fin_run38_50, null())" --o &
+r.mapcalc "ssp2_fin_run39_50_new = if(isnull(initial_dev), ssp2_fin_run39_50, null())" --o &
+r.mapcalc "ssp2_fin_run40_50_new = if(isnull(initial_dev), ssp2_fin_run40_50, null())" --o &
+r.mapcalc "ssp2_fin_run41_50_new = if(isnull(initial_dev), ssp2_fin_run41_50, null())" --o &
+r.mapcalc "ssp2_fin_run42_50_new = if(isnull(initial_dev), ssp2_fin_run42_50, null())" --o &
+r.mapcalc "ssp2_fin_run43_50_new = if(isnull(initial_dev), ssp2_fin_run43_50, null())" --o &
+r.mapcalc "ssp2_fin_run44_50_new = if(isnull(initial_dev), ssp2_fin_run44_50, null())" --o &
+r.mapcalc "ssp2_fin_run45_50_new = if(isnull(initial_dev), ssp2_fin_run45_50, null())" --o &
+r.mapcalc "ssp2_fin_run46_50_new = if(isnull(initial_dev), ssp2_fin_run46_50, null())" --o &
+r.mapcalc "ssp2_fin_run47_50_new = if(isnull(initial_dev), ssp2_fin_run47_50, null())" --o &
+r.mapcalc "ssp2_fin_run48_50_new = if(isnull(initial_dev), ssp2_fin_run48_50, null())" --o &
+r.mapcalc "ssp2_fin_run49_50_new = if(isnull(initial_dev), ssp2_fin_run49_50, null())" --o &
+r.mapcalc "ssp2_fin_run50_50_new = if(isnull(initial_dev), ssp2_fin_run50_50, null())" --o
+
+r.series input=ssp2_fin_run1_50_new,ssp2_fin_run2_50_new,ssp2_fin_run3_50_new,ssp2_fin_run4_50_new,ssp2_fin_run5_50_new,ssp2_fin_run6_50_new,ssp2_fin_run7_50_new,ssp2_fin_run8_50_new,ssp2_fin_run9_50_new,ssp2_fin_run10_50_new,ssp2_fin_run11_50_new,ssp2_fin_run12_50_new,ssp2_fin_run13_50_new,ssp2_fin_run14_50_new,ssp2_fin_run15_50_new,ssp2_fin_run16_50_new,ssp2_fin_run17_50_new,ssp2_fin_run18_50_new,ssp2_fin_run19_50_new,ssp2_fin_run20_50_new,ssp2_fin_run21_50_new,ssp2_fin_run22_50_new,ssp2_fin_run23_50_new,ssp2_fin_run24_50_new,ssp2_fin_run25_50_new,ssp2_fin_run26_50_new,ssp2_fin_run27_50_new,ssp2_fin_run28_50_new,ssp2_fin_run29_50_new,ssp2_fin_run30_50_new,ssp2_fin_run31_50_new,ssp2_fin_run32_50_new,ssp2_fin_run33_50_new,ssp2_fin_run34_50_new,ssp2_fin_run35_50_new,ssp2_fin_run36_50_new,ssp2_fin_run37_50_new,ssp2_fin_run38_50_new,ssp2_fin_run39_50_new,ssp2_fin_run40_50_new,ssp2_fin_run41_50_new,ssp2_fin_run42_50_new,ssp2_fin_run43_50_new,ssp2_fin_run44_50_new,ssp2_fin_run45_50_new,ssp2_fin_run46_50_new,ssp2_fin_run47_50_new,ssp2_fin_run48_50_new,ssp2_fin_run49_50_new,ssp2_fin_run50_50_new output=ssp2_fin_dev_count_2075 method=sum
+
+r.mapcalc "ssp2_dev_prob_2075 = (ssp2_fin_dev_count_2075 / 50.0) * 100.0"
+
+# project to SECAS location and export
+
+r.proj input=ssp2_dev_prob_2050 location=SBRE_FUTURES mapset=annual_NLCD output=ssp2_dev_prob_2050_reproj method=nearest resolution=30
+
+r.proj input=ssp2_dev_prob_2075 location=SBRE_FUTURES mapset=annual_NLCD output=ssp2_dev_prob_2075_reproj method=nearest resolution=30
+
+r.out.gdal input=ssp2_dev_prob_2050_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_2050_reproj.tif format=GTiff
+
+r.out.gdal input=ssp2_dev_prob_2075_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_2075_reproj.tif format=GTiff
