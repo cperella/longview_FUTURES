@@ -1813,7 +1813,10 @@ g.copy raster=hindcast_2015_2024_run9_8@EBCI,hindcast_2015_2024_run9_8 &
 g.copy raster=hindcast_2015_2024_run9_9@EBCI,hindcast_2015_2024_run9_9
 
 
-### for 2050 and 2075 results
+
+### time series analysis to create development probability for 2050 and 2075
+
+### ssp1_infill
 r.mapcalc “initial_dev = if(ssp1_sprawl_fin_run1 == 0, 1, null())”
 #2050
 r.mapcalc "ssp1_sprawl_fin_run1_25_new = if(isnull(initial_dev), ssp1_sprawl_fin_run1_25, null())" --o &
