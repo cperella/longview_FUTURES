@@ -2189,3 +2189,8 @@ r.proj input=ssp2_dev_prob_2075 location=SBRE_FUTURES mapset=annual_NLCD output=
 r.out.gdal input=ssp2_dev_prob_2050_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_2050_reproj.tif format=GTiff
 
 r.out.gdal input=ssp2_dev_prob_2075_reproj output=D:\FUTURES\futures_outputs\ssp2_dev_prob_2075_reproj.tif format=GTiff
+
+
+### parsing out final NEW development by subtracting initial development
+
+r.mapcalc "ssp5_sprawl_fin_run14_75_newdev = ssp5_sprawl_fin_run14_75 - urban_2024_reproj" --o
