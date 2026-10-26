@@ -58,3 +58,6 @@ for run in range(1, 51):
         )
 
 print(f"Finished. Renamed: {renamed}; skipped: {skipped}")
+
+### to run this in Python shell in GRASS:
+### exec(open(r"D:\FUTURES\rename_ssp1_script.sh").read())
