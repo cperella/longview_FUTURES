@@ -147,3 +147,7 @@ for row in summary:
 
 print(f"\nPer-run results saved to: {output_csv}")
 print(f"Summary statistics saved to: {summary_csv}")
+
+
+### to run this in Python shell in GRASS:
+### exec(open(r"D:\FUTURES\ssp2_conversion_to_developed.py").read())
