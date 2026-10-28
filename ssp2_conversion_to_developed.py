@@ -1,4 +1,4 @@
-### this script creates a final land-cover raster for each simulation run, assigns new development to category 22 (low-density development), counts forest, agriculture, and developed cells, and summarizes the mean and std across all 50 runs for SSP1 infill scenario
+### this script creates a final land-cover raster for each simulation run, assigns new development to category 22 (low-density development), counts forest, agriculture, and developed cells, and summarizes the mean and std across all 50 runs for SSP2 scenario
 import csv
 import numpy as np
 import grass.script as gs
