@@ -1,0 +1,77 @@
+##### FUTURES code for EBCI Long View Project; Using data from 2000-2014 for calibration, 2015-2024 for validation, and 2025-2100 for future projections.
+##### Note: Redoing previous simulations in new location (secas_sbre_aligned) set to NAD83 / Conus Albers (EPSG:5070) so that everything is in the same projection and uses the same computational region to avoid misalignement issues
+##### Keep all input data in PERMANENT, and use separate mapsets for SSP1, SSP2, and SSP5 simulations
+
+######################################################################## INITIAL STEPS AND DATA PREPARATION ########################################################################
+
+### Created the location secas_sbre_aligned and selected EPSG: 5070 as the projection (datum transformation option 1)
+
+### Used PERMANENT as the mapset where the inputs will be, and created new mapsets to store SSP1, SSP2, and SSP5 scenario results
+
+# make sure we are in the PERMANENT mapset
+g.mapset mapset=PERMANENT
+
+# import the SECAS Blueprint dataset to ensure it is 30m and use as the alignment reference
+r.in.gdal input=D:\conservation_datasets\SEBlueprint20251204\5_Priorities\Blueprint2025.tif output=Blueprint2025
+
+# inspect
+r.info -g map=Blueprint2025
+
+# import counties shapefile to determine study area 
+v.import input=D:\FUTURES\Data\counties\counties_final.shp output=counties
+
+# inspect
+v.info -g map=counties_final
+
+# most recent landuse layer to help set computational region and grid alignment
+r.import input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif output=landuse_2024 resample=nearest (align? res=30m?)
+
+# set the computational region to the county boundaries vector, but align it with the landuse raster
+g.region vector=counties align=landuse_2024 -p
+
+#
+g.region save=study_area_30m
+
+
+
+# import the rest of the NLCD years to the new region and extent
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2000_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2000 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2001_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2001 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2002_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2002 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2003_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2003 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2004_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2004 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2005_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2005 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2006_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2006 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2007_CU_C1V1\Annual_NLCD_LndCov_2007_CU_C1V1.tif output=landuse_2007 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2008_CU_C1V1\Annual_NLCD_LndCov_2008_CU_C1V1.tif output=landuse_2008 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2009_CU_C1V1\Annual_NLCD_LndCov_2009_CU_C1V1.tif output=landuse_2009 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2010_CU_C1V1\Annual_NLCD_LndCov_2010_CU_C1V1.tif output=landuse_2010 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2011_CU_C1V1\Annual_NLCD_LndCov_2011_CU_C1V1.tif output=landuse_2011 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2012_CU_C1V1\Annual_NLCD_LndCov_2012_CU_C1V1.tif output=landuse_2012 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2013_CU_C1V1\Annual_NLCD_LndCov_2013_CU_C1V1.tif output=landuse_2013 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2014_CU_C1V1\Annual_NLCD_LndCov_2014_CU_C1V1.tif output=landuse_2014 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2015_CU_C1V1\Annual_NLCD_LndCov_2015_CU_C1V1.tif output=landuse_2015 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2016_CU_C1V1\Annual_NLCD_LndCov_2016_CU_C1V1.tif output=landuse_2016 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2017_CU_C1V1\Annual_NLCD_LndCov_2017_CU_C1V1.tif output=landuse_2017 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2018_CU_C1V1\Annual_NLCD_LndCov_2018_CU_C1V1.tif output=landuse_2018 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2019_CU_C1V1\Annual_NLCD_LndCov_2019_CU_C1V1.tif output=landuse_2019 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2020_CU_C1V1\Annual_NLCD_LndCov_2020_CU_C1V1.tif output=landuse_2020 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2021_CU_C1V1\Annual_NLCD_LndCov_2021_CU_C1V1.tif output=landuse_2021 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2022_CU_C1V1\Annual_NLCD_LndCov_2022_CU_C1V1.tif output=landuse_2022 &
+r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2023_CU_C1V1\Annual_NLCD_LndCov_2023_CU_C1V1.tif output=landuse_2023
+
+# DEM from the National Map
+    # name = elevation_30m
+    # derive slope?
+
+  # roads from NLCD Impervious Descriptor: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+    # name = roads
+    
+# protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
+    # name = protected_areas_4_1
+    
+  # cities (cities were derived using the centroids of Urban Areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units)
+    # name = cities_5000
+  # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
+    # names = population_trend.csv and population_projection.csv
+
