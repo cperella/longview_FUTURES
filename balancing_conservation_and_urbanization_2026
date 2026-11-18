@@ -1,77 +1,225 @@
-##### FUTURES code for EBCI Long View Project; Using data from 2000-2014 for calibration, 2015-2024 for validation, and 2025-2100 for future projections.
-##### Note: Redoing previous simulations in new location (secas_sbre_aligned) set to NAD83 / Conus Albers (EPSG:5070) so that everything is in the same projection and uses the same computational region to avoid misalignement issues
-##### Keep all input data in PERMANENT, and use separate mapsets for SSP1, SSP2, and SSP5 simulations
+##### This is the full, clean workflow for the FUTURES model for the EBCI Long View Project using the Console in GRASS GIS (version 8.2.0)
+##### Using data from 2000-2014 for calibration period, 2015-2024 for validation (hindcast period), and 2025-2100 for future projections.
+##### Note: This is a redo of previous simulations with a clean workflow in a new location (secas_sbre_aligned) set to NAD83 / Conus Albers (EPSG:5070), so that everything is in the same projection and uses the same computational region to avoid misalignement issues
+##### Therefore, results may change slightly due to difference in random sampling points and stochasticity among replicates, but results in aggregate should be very similar
+##### All input data is located in the PERMANENT mapset, and separate mapsets are used for SSP1, SSP2, and SSP5 simulations
 
 ######################################################################## INITIAL STEPS AND DATA PREPARATION ########################################################################
 
-### Created the location secas_sbre_aligned and selected EPSG: 5070 as the projection (datum transformation option 1)
+### Input data
+  # digital elevation model from the National Map: https://www.usgs.gov/programs/national-geospatial-program/national-map
+    # name = elevation_30m
+    # slope derived previously from elevation_30m
+  # NLCD for 2000-2024: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+    # name = landuse_[year]
+  # roads from NLCD Impervious Descriptor: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+    # name = roads_[year] ### need roads for 2014 and 2024
+  # county boundaries from TIGER:
+    # name = counties
+  # protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
+    # name = protected_areas_4_1
+  # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
+    # names = population_trend.csv and population_projection.csv
 
-### Used PERMANENT as the mapset where the inputs will be, and created new mapsets to store SSP1, SSP2, and SSP5 scenario results
+
+### Created the location secas_sbre_aligned and selected EPSG: 5070 as the projection (datum transformation option 1) in GRASS
 
 # make sure we are in the PERMANENT mapset
 g.mapset mapset=PERMANENT
 
 # import the SECAS Blueprint dataset to ensure it is 30m and use as the alignment reference
 r.in.gdal input=D:\conservation_datasets\SEBlueprint20251204\5_Priorities\Blueprint2025.tif output=Blueprint2025
-
 # inspect
 r.info -g map=Blueprint2025
 
 # import counties shapefile to determine study area 
 v.import input=D:\FUTURES\Data\counties\counties_final.shp output=counties
-
 # inspect
 v.info -g map=counties_final
 
-# most recent landuse layer to help set computational region and grid alignment
-r.import input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif output=landuse_2024 resample=nearest (align? res=30m?)
+# set the computational region to match the counties study area, snap region boundaries to existing 30m Blueprint grid
+g.region vector=counties res=30 align=Blueprint2025
 
-# set the computational region to the county boundaries vector, but align it with the landuse raster
-g.region vector=counties align=landuse_2024 -p
+# save the master region
+g.region save=master_sbre_grid
 
-#
-g.region save=study_area_30m
+# convert vector counties to raster with the values of the FIPS code attribute which links to population file
+v.to.rast input=counties type=area use=attr attribute_column=FIPS output=counties # note that FIPS have to be numeric, not string
 
+# import NLCD files into PERMANENT mapset as landuse_[year]
 
+# test one in the console
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2000_CU_C1V1\Annual_NLCD_LndCov_2000_CU_C1V1.tif output=landuse_2000
+# check that it is aligned before importing all layers
+r.info -g map=landuse_2000
 
-# import the rest of the NLCD years to the new region and extent
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2000_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2000 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2001_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2001 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2002_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2002 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2003_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2003 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2004_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2004 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2005_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2005 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2006_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2006 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2007_CU_C1V1\Annual_NLCD_LndCov_2007_CU_C1V1.tif output=landuse_2007 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2008_CU_C1V1\Annual_NLCD_LndCov_2008_CU_C1V1.tif output=landuse_2008 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2009_CU_C1V1\Annual_NLCD_LndCov_2009_CU_C1V1.tif output=landuse_2009 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2010_CU_C1V1\Annual_NLCD_LndCov_2010_CU_C1V1.tif output=landuse_2010 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2011_CU_C1V1\Annual_NLCD_LndCov_2011_CU_C1V1.tif output=landuse_2011 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2012_CU_C1V1\Annual_NLCD_LndCov_2012_CU_C1V1.tif output=landuse_2012 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2013_CU_C1V1\Annual_NLCD_LndCov_2013_CU_C1V1.tif output=landuse_2013 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2014_CU_C1V1\Annual_NLCD_LndCov_2014_CU_C1V1.tif output=landuse_2014 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2015_CU_C1V1\Annual_NLCD_LndCov_2015_CU_C1V1.tif output=landuse_2015 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2016_CU_C1V1\Annual_NLCD_LndCov_2016_CU_C1V1.tif output=landuse_2016 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2017_CU_C1V1\Annual_NLCD_LndCov_2017_CU_C1V1.tif output=landuse_2017 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2018_CU_C1V1\Annual_NLCD_LndCov_2018_CU_C1V1.tif output=landuse_2018 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2019_CU_C1V1\Annual_NLCD_LndCov_2019_CU_C1V1.tif output=landuse_2019 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2020_CU_C1V1\Annual_NLCD_LndCov_2020_CU_C1V1.tif output=landuse_2020 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2021_CU_C1V1\Annual_NLCD_LndCov_2021_CU_C1V1.tif output=landuse_2021 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2022_CU_C1V1\Annual_NLCD_LndCov_2022_CU_C1V1.tif output=landuse_2022 &
-r.import extent=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2023_CU_C1V1\Annual_NLCD_LndCov_2023_CU_C1V1.tif output=landuse_2023
+# proceed with the rest (if you do this in the GRASS shell instead of the console, it will import all of them one after the other)
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2001_CU_C1V1\Annual_NLCD_LndCov_2001_CU_C1V1.tif output=landuse_2001 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2002_CU_C1V1\Annual_NLCD_LndCov_2002_CU_C1V1.tif output=landuse_2002 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2003_CU_C1V1\Annual_NLCD_LndCov_2003_CU_C1V1.tif output=landuse_2003 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2004_CU_C1V1\Annual_NLCD_LndCov_2004_CU_C1V1.tif output=landuse_2004 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2005_CU_C1V1\Annual_NLCD_LndCov_2005_CU_C1V1.tif output=landuse_2005 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2006_CU_C1V1\Annual_NLCD_LndCov_2006_CU_C1V1.tif output=landuse_2006 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2007_CU_C1V1\Annual_NLCD_LndCov_2007_CU_C1V1.tif output=landuse_2007 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2008_CU_C1V1\Annual_NLCD_LndCov_2008_CU_C1V1.tif output=landuse_2008 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2009_CU_C1V1\Annual_NLCD_LndCov_2009_CU_C1V1.tif output=landuse_2009 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2010_CU_C1V1\Annual_NLCD_LndCov_2010_CU_C1V1.tif output=landuse_2010 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2011_CU_C1V1\Annual_NLCD_LndCov_2011_CU_C1V1.tif output=landuse_2011 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2012_CU_C1V1\Annual_NLCD_LndCov_2012_CU_C1V1.tif output=landuse_2012 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2013_CU_C1V1\Annual_NLCD_LndCov_2013_CU_C1V1.tif output=landuse_2013 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2014_CU_C1V1\Annual_NLCD_LndCov_2014_CU_C1V1.tif output=landuse_2014 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2015_CU_C1V1\Annual_NLCD_LndCov_2015_CU_C1V1.tif output=landuse_2015 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2016_CU_C1V1\Annual_NLCD_LndCov_2016_CU_C1V1.tif output=landuse_2016 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2017_CU_C1V1\Annual_NLCD_LndCov_2017_CU_C1V1.tif output=landuse_2017 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2018_CU_C1V1\Annual_NLCD_LndCov_2018_CU_C1V1.tif output=landuse_2018 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2019_CU_C1V1\Annual_NLCD_LndCov_2019_CU_C1V1.tif output=landuse_2019 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2020_CU_C1V1\Annual_NLCD_LndCov_2020_CU_C1V1.tif output=landuse_2020 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2021_CU_C1V1\Annual_NLCD_LndCov_2021_CU_C1V1.tif output=landuse_2021 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2022_CU_C1V1\Annual_NLCD_LndCov_2022_CU_C1V1.tif output=landuse_2022 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2023_CU_C1V1\Annual_NLCD_LndCov_2023_CU_C1V1.tif output=landuse_2023 &
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_LndCov_2024_CU_C1V1\Annual_NLCD_LndCov_2024_CU_C1V1.tif output=landuse_2024
 
-# DEM from the National Map
-    # name = elevation_30m
-    # derive slope?
+# import the DEM; data downloaded from the National Map, tiles for study area combined in ArcGIS Pro and then exported
+r.import extent=region resolution=region input=D:\FUTURES\secas_sbre_aligned_inputs\30m_DEM\elevation_30m.tif output=elevation_30m
 
-  # roads from NLCD Impervious Descriptor: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
-    # name = roads
+# derive slope from DEM
+r.slope.aspect elevation=elevation_30m slope=slope
+
+# import roads from NLCD Impervious Descriptor: https://www.mrlc.gov/data?f%5B0%5D=project_tax_term_term_parents_tax_term_name%3AAnnual%20NLCD
+# first for 2014
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2014_CU_C1V1\Annual_NLCD_ImpDsc_2014_CU_C1V1.tif output=imperv_2014
+# convert to binary roads/non-roads
+r.mapcalc "roads_2014 = if(imperv_2014 == 1, 1, null())"
+
+# then for 2024
+r.import extent=region resolution=region input=D:\nlcd_annual_data\Annual_NLCD_ImpDsc_2024_CU_C1V1\Annual_NLCD_ImpDsc_2024_CU_C1V1.tif output=imperv_2024
+# convert to binary roads/non-roads
+r.mapcalc "roads_2024 = if(imperv_2024 == 1, 1, null())"
     
-# protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
-    # name = protected_areas_4_1
-    
-  # cities (cities were derived using the centroids of Urban Areas polygons as defined by the US Census Bureau (downloaded from Tiger/Line shapefiles database for year 2024); urban areas are defined as having a population of more than 5000 people or at least 2000 households/housing units)
-    # name = cities_5000
-  # county population past estimates and future projections (past estimates from state demography data and NHGIS; future projections from Hauer et al. 2019)
-    # names = population_trend.csv and population_projection.csv
+# import protected areas (from  PAD-US: https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-download) ### note: new data upload, v4.1
+v.import extent=region input=D:\FUTURES\secas_sbre_aligned_inputs\PAD_US_shp\pad_4_1.shp output=protected_areas
+# convert protected areas from vector to raster 
+v.to.rast input=protected_areas output=protected_areas use=val
+# set NULLs to zeros for simple raster algebra in next step
+r.null map=protected_areas null=0
+
+# create binary rasters of developed/undeveloped areas for annual NLCD product from 2000-2024
+## developed or urbanized areas derived from NLCD categories 21-24
+## developed = 1, undeveloped = 0, null = unsuitable for development (water, wetlands and protected areas)
+r.mapcalc "urban_2000 = if(landuse_2000 >= 21 && landuse_2000 <= 24, 1, if(landuse_2000 == 11 || landuse_2000 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2001 = if(landuse_2001 >= 21 && landuse_2001 <= 24, 1, if(landuse_2001 == 11 || landuse_2001 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2002 = if(landuse_2002 >= 21 && landuse_2002 <= 24, 1, if(landuse_2002 == 11 || landuse_2002 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2003 = if(landuse_2003 >= 21 && landuse_2003 <= 24, 1, if(landuse_2003 == 11 || landuse_2003 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2004 = if(landuse_2004 >= 21 && landuse_2004 <= 24, 1, if(landuse_2004 == 11 || landuse_2004 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2005 = if(landuse_2005 >= 21 && landuse_2005 <= 24, 1, if(landuse_2005 == 11 || landuse_2005 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2006 = if(landuse_2006 >= 21 && landuse_2006 <= 24, 1, if(landuse_2006 == 11 || landuse_2006 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2007 = if(landuse_2007 >= 21 && landuse_2007 <= 24, 1, if(landuse_2007 == 11 || landuse_2007 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2008 = if(landuse_2008 >= 21 && landuse_2008 <= 24, 1, if(landuse_2008 == 11 || landuse_2008 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2009 = if(landuse_2009 >= 21 && landuse_2009 <= 24, 1, if(landuse_2009 == 11 || landuse_2009 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2010 = if(landuse_2010 >= 21 && landuse_2010 <= 24, 1, if(landuse_2010 == 11 || landuse_2010 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2011 = if(landuse_2011 >= 21 && landuse_2011 <= 24, 1, if(landuse_2011 == 11 || landuse_2011 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2012 = if(landuse_2012 >= 21 && landuse_2012 <= 24, 1, if(landuse_2012 == 11 || landuse_2012 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2013 = if(landuse_2013 >= 21 && landuse_2013 <= 24, 1, if(landuse_2013 == 11 || landuse_2013 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2014 = if(landuse_2014 >= 21 && landuse_2014 <= 24, 1, if(landuse_2014 == 11 || landuse_2014 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2015 = if(landuse_2015 >= 21 && landuse_2015 <= 24, 1, if(landuse_2015 == 11 || landuse_2015 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2016 = if(landuse_2016 >= 21 && landuse_2016 <= 24, 1, if(landuse_2016 == 11 || landuse_2016 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2017 = if(landuse_2017 >= 21 && landuse_2017 <= 24, 1, if(landuse_2017 == 11 || landuse_2017 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2018 = if(landuse_2018 >= 21 && landuse_2018 <= 24, 1, if(landuse_2018 == 11 || landuse_2018 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2019 = if(landuse_2019 >= 21 && landuse_2019 <= 24, 1, if(landuse_2019 == 11 || landuse_2019 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2020 = if(landuse_2020 >= 21 && landuse_2020 <= 24, 1, if(landuse_2020 == 11 || landuse_2020 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2021 = if(landuse_2021 >= 21 && landuse_2021 <= 24, 1, if(landuse_2021 == 11 || landuse_2021 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2022 = if(landuse_2022 >= 21 && landuse_2022 <= 24, 1, if(landuse_2022 == 11 || landuse_2022 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2023 = if(landuse_2023 >= 21 && landuse_2023 <= 24, 1, if(landuse_2023 == 11 || landuse_2023 >= 90 || protected_areas, null(), 0))"
+r.mapcalc "urban_2024 = if(landuse_2024 >= 21 && landuse_2024 <= 24, 1, if(landuse_2024 == 11 || landuse_2024 >= 90 || protected_areas, null(), 0))"
+
+
+#############################################################################################################################################################
+########################                             SET UP VARIABLES FOR HINDCAST PERIOD (2000-2014)                               #########################
+#############################################################################################################################################################
+
+######################################################## POTENTIAL SUBMODEL (DERIVE PREDICTORS) #############################################################
+
+### DERIVE PREDICTORS FROM LANDUSE, PROTECTED AREAS, AND ROADS RASTERS
+
+# derive distance from lakes/rivers
+# first extract "open water" category from NLCD
+r.mapcalc "water_2014 = if(landuse_2014 == 11, 1, null())"
+# then compute distance and set color table
+r.grow.distance input=water_2014 distance=dist_water_2014
+
+# derive distance to forest land
+# extract forest categories from NLCD
+r.mapcalc "forest_2014 = if(landuse_2014 >= 41 && landuse_2014 <= 43, 1, null())"
+r.grow.distance input=forest_2014 distance=dist_forest_2014
+
+## derive distance to ag land
+# extract agriculture categories from NLCD
+r.mapcalc "agriculture_2014 = if(landuse_2014 >= 81 && landuse_2014 <= 82, 1, null())"
+r.grow.distance input=agriculture_2014 distance=dist_agriculture_2014
+
+## derive distnace from protected areas
+# use raster of protected areas from above but set NULLs to zero
+r.null map=protected_areas setnull=0
+r.grow.distance input=protected_areas distance=dist_protected_2014
+r.colors map=dist_protected_2014 color=gyr
+
+## compute road density
+r.null map=roads_2014 null=0
+r.neighbors -c input=roads_2014 output=road_dens_2014 size=25 method=average
+
+## compute distance to all roads
+r.grow.distance -m input=roads_2014 distance=dist_roads_2014
+
+# compute development pressure with r.futures.devpressure module
+# development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
+# tested previously and found that size=8, gamma=2 was the most parsimonious
+r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g2_s8 method=gravity size=8 gamma=2 scaling_factor=1
+
+
+### RESCALING VARIABLES
+
+# rescale some of the input variables to percentage or km - for distances, convert to km, then log-transform
+r.mapcalc "dist_water_2014_km = dist_water_2014 / 1000"
+r.mapcalc "dist_water_2014_km_log = log(dist_water_2014_km + 1)"
+
+r.mapcalc "dist_forest_2014_km = dist_forest_2014 / 1000"
+r.mapcalc "dist_forest_2014_km_log = log(dist_forest_2014_km + 1)"
+
+r.mapcalc "dist_ag_2014_km = dist_ag_2014 / 1000"
+r.mapcalc "dist_ag_2014_km_log = log(dist_agriculture_2014_km + 1)"
+
+r.mapcalc "dist_protected_2014_km = dist_protected_2014 / 1000"
+r.mapcalc "dist_protected_2014_km_log = log(dist_protected_2014_km + 1)"
+
+r.mapcalc "dist_roads_2014_km = dist_roads_2014 / 1000"
+r.mapcalc "dist_roads_2014_km_log = log(dist_roads_2014_km + 1)"
+
+r.mapcalc "road_dens_2014_perc = road_dens_2014 * 100"
+
+
+### SAMPLING
+
+# To build a multilevel statistical model describing the relation between predictors and observed change, we randomly sample predictors and response variable. Our response variable is new development between 2000 and 2014.
+r.mapcalc "urban_change_00_14 = if(urban_2014 == 1, if(urban_2000 == 0, 1, null()), 0)"
+
+# to sample only in the counties of the study area, clip the development layer
+r.mapcalc "urban_change_00_14_clip = if(counties, urban_change_00_14)"
+
+# to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
+r.report map=urban_change_00_14_clip units=h,c,p
+
+# sample the predictors and the response variable with n random points in undeveloped areas and n points in developed area
+
+# 130,000 in undeveloped areas, 26,000 (original tutorial for 3 counties multiplied by 13 for 39 counties)
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_130k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 npoints=130000,26000 --overwrite
+# attribute table can be exported as CSV (optional)
+v.db.select map=sampling_00_14_300k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_300k.csv --overwrite
+v.db.select map=sampling_00_14_130k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_130k.csv --overwrite
+
+##### UPDATED sampling points w NEW PREDICTORS #####
+
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr npoints=130000,26000 --overwrite
+v.db.select map=sampling_00_14_156k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr separator=comma file=samples_00_14_156k.csv --overwrite
+
+
 
