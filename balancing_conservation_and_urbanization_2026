@@ -140,6 +140,8 @@ r.mapcalc "urban_2024 = if(landuse_2024 >= 21 && landuse_2024 <= 24, 1, if(landu
 ######################################################## POTENTIAL SUBMODEL (DERIVE PREDICTORS) #############################################################
 
 ### DERIVE PREDICTORS FROM LANDUSE, PROTECTED AREAS, AND ROADS RASTERS
+# predictors were extensively tested in previous model runs
+# other predictors tested include: forest cover, ag cover, distance to protected areas, log-transformed slope, non-log transformed distances of included distance variables, travel time to cities, distance to interchanges, SVI (census tract level), alternative development pressure parameters
 
 # derive distance from lakes/rivers
 # first extract "open water" category from NLCD
@@ -152,27 +154,21 @@ r.grow.distance input=water_2014 distance=dist_water_2014
 r.mapcalc "forest_2014 = if(landuse_2014 >= 41 && landuse_2014 <= 43, 1, null())"
 r.grow.distance input=forest_2014 distance=dist_forest_2014
 
-## derive distance to ag land
+# derive distance to ag land
 # extract agriculture categories from NLCD
 r.mapcalc "agriculture_2014 = if(landuse_2014 >= 81 && landuse_2014 <= 82, 1, null())"
 r.grow.distance input=agriculture_2014 distance=dist_agriculture_2014
 
-## derive distnace from protected areas
-# use raster of protected areas from above but set NULLs to zero
-r.null map=protected_areas setnull=0
-r.grow.distance input=protected_areas distance=dist_protected_2014
-r.colors map=dist_protected_2014 color=gyr
+# compute distance to roads
+r.grow.distance -m input=roads_2014 distance=dist_roads_2014
 
-## compute road density
+# compute road density
 r.null map=roads_2014 null=0
 r.neighbors -c input=roads_2014 output=road_dens_2014 size=25 method=average
 
-## compute distance to all roads
-r.grow.distance -m input=roads_2014 distance=dist_roads_2014
-
-# compute development pressure with r.futures.devpressure module
+# compute DEVELOPMENT PRESSURE with r.futures.devpressure module
 # development pressure is a predictor based on number of neighboring cells within set search distance, weighted by distance; allows feedback for future time steps
-# tested previously and found that size=8, gamma=2 was the most parsimonious
+# tested previously and found that size=8, gamma=2 was the most parsimonious for this model, but other parameters for neighborhood size and gamma should be tested if using different data/study area
 r.futures.devpressure -n input=urban_2014 output=devpressure_2014_g2_s8 method=gravity size=8 gamma=2 scaling_factor=1
 
 
@@ -185,16 +181,50 @@ r.mapcalc "dist_water_2014_km_log = log(dist_water_2014_km + 1)"
 r.mapcalc "dist_forest_2014_km = dist_forest_2014 / 1000"
 r.mapcalc "dist_forest_2014_km_log = log(dist_forest_2014_km + 1)"
 
-r.mapcalc "dist_ag_2014_km = dist_ag_2014 / 1000"
-r.mapcalc "dist_ag_2014_km_log = log(dist_agriculture_2014_km + 1)"
-
-r.mapcalc "dist_protected_2014_km = dist_protected_2014 / 1000"
-r.mapcalc "dist_protected_2014_km_log = log(dist_protected_2014_km + 1)"
+r.mapcalc "dist_agriculture_2014_km = dist_agriculture_2014 / 1000"
+r.mapcalc "dist_agriculture_2014_km_log = log(dist_agriculture_2014_km + 1)"
 
 r.mapcalc "dist_roads_2014_km = dist_roads_2014 / 1000"
 r.mapcalc "dist_roads_2014_km_log = log(dist_roads_2014_km + 1)"
 
 r.mapcalc "road_dens_2014_perc = road_dens_2014 * 100"
+
+### retest other variables to make sure this is the best model
+
+## smooth transition between forests and other land uses
+r.neighbors -c input=forest_2014 output=forest_smooth_2014 size=15 method=average
+
+## smooth transition between agriculture and other land uses
+r.neighbors -c input=agriculture_2014 output=agriculture_smooth_2014 size=15 method=average
+
+## compute travel time to cities/towns defined as cumulative cost using estimated speed
+v.import extent=region input=D:\FUTURES\Data\roads\roads_all\roads_all.shp output=roads_all_2024
+v.import extent=region input=D:\FUTURES\Data\places\cities.shp output=cities_5000
+
+
+# first specify speed for different types of roads 
+# create a new attribute field (speed) in the roads layer and then assign speed in km/h based on type of road
+v.db.addcolumn map=roads_all_2024 columns="speed double precision"
+v.db.update map=roads_all_2024 column=speed value=50 where="MTFCC = 'S1400'" # S1400 = local neighborhood road, rural road, city street 
+v.db.update map=roads_all_2024 column=speed value=100 where="MTFCC IN ('S1100', 'S1200')" # S1100 = primary road, S1200 = secondary road
+# rasterize the selected road types using the speed values as raster values
+v.to.rast input=roads_all_2024 type=line where="MTFCC IN ('S1100', 'S1200', 'S1400')" output=roads_all_2024_speed use=attr attribute_column=speed
+# set the rest of the area to low speed and recompute the speed as time to travel through a 30 m cell in minutes
+r.null map=roads_all_2024_speed null=5
+r.mapcalc "roads_travel_time = 1.8 / roads_all_2024_speed"
+# compute cost raster
+r.cost input=roads_travel_time output=travel_time_cities start_points=cities_5000
+
+## compute distance to interchanges
+v.to.rast input=roads_all_2024 type=line where="MTFCC = 'S1630'" output=interchanges use=val # S1630 = highway ramp
+r.grow.distance -m input=interchanges distance=dist_interchanges
+
+## include SVI data using SVI score at the county level; downloaded CSV, joined with counties in ArcGIS pro, then imported into GRASS (used 2014 and 2022 data)
+v.import extent=region input=D:\FUTURES\Data\SVI shapefiles\svi_2014_censustr.shp output=svi_censustr_2014
+v.to.rast input=svi_censustr_2014 type=area output=svi_censustr_2014 use=attr attribute_column=RPL_THEMES
+
+r.mapcalc "dist_interchanges_km = dist_interchanges / 1000"
+r.mapcalc "dist_interchanges_km_log = log(dist_interchanges_km + 1)"
 
 
 ### SAMPLING
@@ -205,21 +235,40 @@ r.mapcalc "urban_change_00_14 = if(urban_2014 == 1, if(urban_2000 == 0, 1, null(
 # to sample only in the counties of the study area, clip the development layer
 r.mapcalc "urban_change_00_14_clip = if(counties, urban_change_00_14)"
 
-# to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio
+# to estimate number of sampling points, use r.report to report number of developed/undeveloped cells and their ratio ###### LOOK INTO THE SAMPLING POINTS SITUATION
 r.report map=urban_change_00_14_clip units=h,c,p
 
 # sample the predictors and the response variable with n random points in undeveloped areas and n points in developed area
+# 130,000 in undeveloped areas, 26,000 (original tutorial for 3 counties multiplied by 13 for 39 counties) - total 156k (tested in previous model runs)
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties,devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,svi_censustr_2014 npoints=130000,26000 --overwrite
+v.db.select map=sampling_00_14_156k columns=urban_change_00_14_clip,counties,devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log,svi_censustr_2014 separator=comma file=D:\FUTURES\secas_sbre_aligned_outputs\sampledpts_00_14_156k.csv --overwrite
 
-# 130,000 in undeveloped areas, 26,000 (original tutorial for 3 counties multiplied by 13 for 39 counties)
-r.sample.category input=urban_change_00_14_clip output=sampling_00_14_130k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 npoints=130000,26000 --overwrite
-# attribute table can be exported as CSV (optional)
-v.db.select map=sampling_00_14_300k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_300k.csv --overwrite
-v.db.select map=sampling_00_14_130k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,road_dens_2014_perc,forest_smooth_perc_2014,ag_smooth_perc_2014,dist_to_water_km_2014,dist_to_protected_km_2014,dist_interchanges_km,travel_time_cities,dist_roads_2014_km,svi_counties_perc_2014 separator=comma file=samples_00_14_130k.csv --overwrite
 
-##### UPDATED sampling points w NEW PREDICTORS #####
+### test again
 
-r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k sampled=counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr npoints=130000,26000 --overwrite
-v.db.select map=sampling_00_14_156k columns=urban_change_00_14_clip,counties_final,devpressure_2014_g2_s8,devpressure_2014_g2_s10,devpressure_2014_g15_s8,slope,slope_log,road_dens_2014_perc,forest_smooth_perc_2014,dist_forest_km_2014,dist_forest_km_2014_log,ag_smooth_perc_2014,dist_ag_km_2014,dist_ag_km_2014_log,dist_to_water_km_2014,dist_to_water_km_2014_log,dist_to_protected_km_2014,dist_to_protected_km_2014_log,dist_roads_2014_km,dist_roads_2014_km_log,svi_2014_censustr separator=comma file=samples_00_14_156k.csv --overwrite
+r.sample.category input=urban_change_00_14_clip output=sampling_00_14_156k_test sampled=counties,devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log,svi_censustr_2014 npoints=130000,26000 --overwrite
+v.db.select map=sampling_00_14_156k_test columns=urban_change_00_14_clip,counties,devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log,svi_censustr_2014 separator=comma file=D:\FUTURES\secas_sbre_aligned_outputs\samples_00_14_156k_test.csv --overwrite
 
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test1.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log,svi_censustr_2014 developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test2.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test3.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test4.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_protected_2014_km_log,dist_roads_2014_km_log,svi_censustr_2014 developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test5.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+
+
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test6.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log,svi_censustr_2014 developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test7.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test8.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log,dist_interchanges_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+r.futures.potential input=sampling_00_14_156k_test output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014_test9.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log,svi_censustr_2014 developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+
+
+### DEVELOPMENT POTENTIAL
+
+# find the best model for predicting urbanization with r.futures.potential by trying different combinations of predictions (tested extensively in previous model runs)
+r.futures.potential input=sampling_00_14_156k output=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv columns=devpressure_2014_g2_s8,slope,road_dens_2014_perc,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_water_2014_km_log,dist_roads_2014_km_log developed_column=urban_change_00_14_clip subregions_column=counties --overwrite
+
+r.futures.potsurface input=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv subregions=counties output=suitability_2014
+
+r.colors map=suitability_2014 color=byr
 
 
