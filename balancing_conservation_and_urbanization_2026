@@ -221,3 +221,43 @@ r.colors map=suitability_2014 color=byr
 r.futures.demand development=urban_2000,urban_2001,urban_2002,urban_2003,urban_2004,urban_2005,urban_2006,urban_2007,urban_2008,urban_2009,urban_2010,urban_2011,urban_2012,urban_2013,urban_2014 subregions=counties observed_population=D:\FUTURES\secas_sbre_aligned_inputs\population\pop_trend_seer_2000_2014.csv projected_population=D:\FUTURES\secas_sbre_aligned_inputs\population\pop_proj_seer_2015_2024.csv simulation_times=2015,2016,2017,2018,2019,2020,2021,2022,2023,2024 plot=D:\FUTURES\secas_sbre_aligned_outputs\plot_demand_seer_2000_2024.pdf demand=D:\FUTURES\secas_sbre_aligned_outputs\demand_seer_2000_2024.csv separator=comma
 
 
+### PATCH CALIBRATION
+
+# start with overall study area
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=counties patch_sizes=D:\FUTURES\secas_sbre_aligned_outputs\patches.txt patch_threshold=1800  -l
+
+
+# Buncombe
+v.to.rast input=counties type=area where="FIPS == 37021" use=attr attribute_column=FIPS output=buncombe
+g.region raster=buncombe zoom=buncombe -p
+
+### NOTE: got an error trying to run the code below: (WARNING: No data base element files found\ERROR: Running r.futures.pga failed.\The subprocess ended with a non-zero return code: 3221225781)
+### Seems to have been an error with GRASS 8.2 vs 8.4 versions; reinstalled r.futures in the GRASS terminal and that fixed the problem wihtout causing any issues in my current GRASS session
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=buncombe patch_sizes=D:\FUTURES\secas_sbre_aligned_outputs\patches_buncombe_2000_2014.txt calibration_results=D:\FUTURES\secas_sbre_aligned_outputs\calib_buncombe_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,dist_water_2014_km_log,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_roads_2014_km_log,road_dens_2014_perc demand=D:\FUTURES\secas_sbre_aligned_outputs\demand_seer_2000_2024.csv devpot_params=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+g.region region=master_sbre_grid -p
+
+# Blount
+v.to.rast input=counties type=area where="FIPS == 47009" use=attr attribute_column=FIPS output=blount
+g.region raster=blount zoom=blount -p
+
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=blount patch_sizes=D:\FUTURES\secas_sbre_aligned_outputs\patches_blount_2000_2014.txt calibration_results=D:\FUTURES\secas_sbre_aligned_outputs\calib_blount_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,dist_water_2014_km_log,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_roads_2014_km_log,road_dens_2014_perc demand=D:\FUTURES\secas_sbre_aligned_outputs\demand_seer_2000_2024.csv devpot_params=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+g.region region=master_sbre_grid -p
+
+# Jackson
+v.to.rast input=counties type=area where="FIPS == 37099" use=attr attribute_column=FIPS output=jackson
+g.region raster=jackson zoom=jackson -p
+
+r.futures.calib development_start=urban_2000 development_end=urban_2014 subregions=jackson patch_sizes=D:\FUTURES\secas_sbre_aligned_outputs\patches_jackson_2000_2014.txt calibration_results=D:\FUTURES\secas_sbre_aligned_outputs\calib_jackson_2000_2014.csv patch_threshold=1800 repeat=5 compactness_mean=0.1,0.3,0.5,0.7,0.9 compactness_range=0.1,0.05 discount_factor=0.1,0.3,0.5,0.7,0.9 predictors=slope,dist_water_2014_km_log,dist_forest_2014_km_log,dist_agriculture_2014_km_log,dist_roads_2014_km_log,road_dens_2014_perc demand=D:\FUTURES\secas_sbre_aligned_outputs\demand_seer_2000_2024.csv devpot_params=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv num_neighbors=4 seed_search=probability development_pressure=devpressure_2014_g2_s8 development_pressure_approach=gravity n_dev_neighbourhood=8 gamma=2 scaling_factor=1
+
+g.region region=master_sbre_grid -p
+
+######## FUTURES SIMULATION #########
+
+# change to HINDCAST mapset and set the saved computational region
+g.mapset mapset=HINDCAST
+g.region region=master_sbre_grid -p
+
+# everything is ready to run r.futures.pga:
+r.futures.parallelpga nprocs=1 repeat=50 subregions=counties@PERMANENT developed=urban_2014@PERMANENT predictors=slope@PERMANENT,dist_water_2014_km_log@PERMANENT,dist_forest_2014_km_log@PERMANENT,dist_agriculture_2014_km_log@PERMANENT,dist_roads_2014_km_log@PERMANENT,road_dens_2014_perc@PERMANENT devpot_params=D:\FUTURES\secas_sbre_aligned_outputs\potential_2014.csv development_pressure=devpressure_2014_g2_s8@PERMANENT n_dev_neighbourhood=8 development_pressure_approach=gravity gamma=2 scaling_factor=1 demand=D:\FUTURES\secas_sbre_aligned_outputs\demand_seer_2000_2024.csv discount_factor=0.5 compactness_mean=0.5 compactness_range=0.05 patch_sizes=D:\FUTURES\secas_sbre_aligned_outputs\patches.txt num_neighbors=4 seed_search=random random_seed=1 output=hindcast_2015_2024 output_series=hindcast_2015_2024
